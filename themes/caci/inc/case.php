@@ -43,10 +43,40 @@ class Vindig_Case {
             'show_in_menu' => true,
             'has_archive' => true,
             'menu_position' => 4,
-            'rewrite' => false
+            'rewrite' => false,
+            'show_in_rest' => true,
         );
 
         register_post_type('case', $args);
+
+        $case_post_metas = [
+            "nome",
+            "apelido",
+            "idade",
+            "descricao",
+            "povo",
+            "aldeia",
+            "dia",
+            "mes",
+            "ano",
+            "cod_ibge",
+            "municipio",
+            "uf",
+            "relatorio",
+            "cod_funai",
+            "terra_indigena",
+            "fonte_cimi",
+        ];
+
+        $default_meta_arg = [
+            'show_in_rest' => true,
+            'single' => true,
+            'type' => 'string',
+        ];
+
+        foreach($case_post_metas as $meta_key) {
+            register_post_meta( 'case', $meta_key, $default_meta_arg );
+        }
     }
 
     function json_prepare_post($_post, $post, $context) {
