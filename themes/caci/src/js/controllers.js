@@ -223,12 +223,14 @@
         // Async get cases
         $scope.loading = true;
         Vindig.cases().then(function(res) {
+            // console.log(res);
           var promises = [];
           $scope.casos = res.data;
           var totalPages = res.headers('X-WP-TotalPages');
           for(var i = 2; i <= totalPages; i++) {
             promises.push(Vindig.cases({page: i}));
             promises[i-2].then(function(res) {
+                // console.log($scope.casos);
               $scope.casos = $scope.casos.concat(res.data);
             });
           }

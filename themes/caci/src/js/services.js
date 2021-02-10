@@ -54,6 +54,7 @@
             });
           },
           cases: function(params, filter) {
+              
             params = params || {};
             params = _.extend({
               type: 'case'
@@ -69,7 +70,7 @@
 
             return $http({
               method: 'GET',
-              url: vindig.api + '/posts',
+              url: vindig.api + '/case',
               params: params
             });
           },
@@ -137,15 +138,18 @@
           getPost: function(id) {
             return $http.get(vindig.api + '/posts/' + id);
           },
+          getMap: function(id) {
+            return $http.get(vindig.api + '/map/' + id);
+          },
           getUniq: function(list, param, uniqParam) {
             var vals = [];
             _.each(list, function(item) {
-              if(item[param]) {
-                if(angular.isArray(item[param])) {
-                  if(item[param].length)
-                    vals = vals.concat(item[param]);
+              if(item.meta[param]) {
+                if(angular.isArray(item.meta[param])) {
+                  if(item.meta[param].length)
+                    vals = vals.concat(item.meta[param]);
                 } else
-                  vals.push(item[param]);
+                  vals.push(item.meta[param]);
               }
             });
             if(vals.length) {

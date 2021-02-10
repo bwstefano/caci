@@ -41,7 +41,7 @@ require('./util');
             function($q, Vindig) {
               var deferred = $q.defer();
               if(vindig.featured_map) {
-                Vindig.getPost(vindig.featured_map).then(function(data) {
+                Vindig.getMap(vindig.featured_map).then(function(data) {
                   deferred.resolve(data.data);
                 });
               } else {
@@ -113,7 +113,7 @@ require('./util');
             function($q, Dossier, Vindig) {
               var mapId = Dossier.data.maps.length ? Dossier.data.maps[0] : vindig.featured_map;
               var deferred = $q.defer();
-              Vindig.getPost(mapId).then(function(data) {
+              Vindig.getMap(mapId).then(function(data) {
                 deferred.resolve(data.data);
               });
               return deferred.promise;
