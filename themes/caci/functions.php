@@ -166,3 +166,41 @@ require_once(STYLESHEETPATH . '/inc/case.php');
 require_once(STYLESHEETPATH . '/inc/denuncia.php');
 require_once(STYLESHEETPATH . '/inc/contact.php');
 require_once(STYLESHEETPATH . '/inc/shortcodes.php');
+
+/* Migrate Geolocation meta */
+if(!get_option('migrated-geolocation-meta')){
+	add_option('migrated-geolocation-meta', 1);
+	
+	$query = new WP_Query([
+		'posts_per_page' => -1,
+		'suppress_filters' => true,
+        'post_type' => 'case',
+		'meta_query' => array(
+			array(
+					'key' => 'geocode_latitude',
+				'value'   => array(''),
+				'compare' => 'NOT IN'
+			),
+	    ),
+
+	]);
+
+	while ( $query->have_posts() ) {
+		$query->the_post();
+
+		$source_lat = get_post_meta(get_the_ID(), 'geocode_latitude', true);
+		$source_lon = get_post_meta(get_the_ID(), 'geocode_longitude', true);
+		$source_geocode = get_post_meta(get_the_ID(), 'geocode_address', true);
+
+		// Build "_related_point" object
+		$related_point = array(
+			'_geocode_lat' => $source_lat,
+			'_geocode_lon' => $source_lon,
+			'relevance' => 'primary',
+			'_geocode_full_address' => $source_geocode
+
+		);
+
+		update_post_meta( get_the_ID(), '_related_point', $related_point );
+	}
+}

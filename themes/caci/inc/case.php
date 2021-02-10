@@ -77,6 +77,60 @@ class Vindig_Case {
         foreach($case_post_metas as $meta_key) {
             register_post_meta( 'case', $meta_key, $default_meta_arg );
         }
+
+        register_post_meta('case', '_related_point', [
+			'show_in_rest'  => array(
+					'schema' => array(
+						'properties' => array(
+							'_geocode_lat' => [
+								'type' => 'float'
+							],
+							'_geocode_lon' => [
+								'type' => 'float'
+							],
+							'_geocode_city_level_1' => [
+								'type' => 'string'
+							],
+							'_geocode_city' => [
+								'type' => 'string'
+							],
+							'_geocode_region_level_3' => [
+								'type' => 'string'
+							],
+							'_geocode_region_level_2' => [
+								'type' => 'string'
+							],
+							'_geocode_region_level_1' => [
+								'type' => 'string'
+							],
+							'_geocode_country_code' => [
+								'type' => 'string'
+							],
+							'_geocode_country' => [
+								'type' => 'string'
+							],
+							'_geocode_full_address' => [
+								'type' => 'string'
+							],
+							'relevance' => [
+								'type' => 'string',
+								'enum' => [
+									'primary',
+									'secondary'
+								]
+							],
+						),
+						'additionalProperties' => false,
+					),
+				),
+			'single' => false,
+			'sanitize_callback' => [$this, 'sanitize_points'],
+			'auth_callback' => function() {
+				return current_user_can('edit_posts');
+			},
+			'type' => 'object',
+			'description' => __('Multiple metadata that holds locations related to the post. Each location is an object composed of lat, lon and geocode attributes', 'jeo')
+		]);
     }
 
     function json_prepare_post($_post, $post, $context) {
