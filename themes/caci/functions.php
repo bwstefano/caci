@@ -113,8 +113,10 @@ function vindig_scripts() {
 
     wp_localize_script('app', 'vindig', array(
         'base' => get_stylesheet_directory_uri(),
-        'api' => esc_url(get_json_url()),
-        'featured_map' => $front_page_map
+        'api' => esc_url(get_rest_url(null, '/wp/v2')),
+        // 'api' => esc_url(get_json_url()),
+        
+        'featured_map' => 2307
     ));
 }
 add_action('wp_enqueue_scripts', 'vindig_scripts');
