@@ -52,7 +52,6 @@ class Vindig_Case {
 
   function json_prepare_post($_post, $post, $context) {
     if($post['post_type'] == 'case') {
-
       $_post['nome'] = get_post_meta($post['ID'], 'nome', true);
       $_post['apelido'] = get_post_meta($post['ID'], 'apelido', true);
       $_post['idade'] = get_post_meta($post['ID'], 'idade', true);
