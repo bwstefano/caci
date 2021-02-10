@@ -1,1135 +1,1334 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function(_, undefined) {
-
-  module.exports = function(app) {
-
-    app.controller('TourCtrl', [
-      '$scope',
-      function($scope) {
-        $scope.total = 5;
-        $scope.step = 1;
-
-        $scope.nextStep = function() {
-          if($scope.step < $scope.total) {
-            $scope.step++;
-          }
-        };
-        $scope.prevStep = function() {
-          if($scope.step > 1) {
-            $scope.step--;
-          }
-        };
-        $scope.isStep = function(step) {
-          return $scope.step == step;
-        };
-      }
-    ]);
-
-    app.controller('MainCtrl', [
-      '$q',
-      '$rootScope',
-      '$scope',
-      '$state',
-      '$timeout',
-      '$cookies',
-      'Vindig',
-      function($q, $rootScope, $scope, $state, $timeout, $cookies, Vindig) {
-
-        $scope.base = vindig.base;
-
-        $scope.dialogs = {};
-        $scope.showDialog = function(name) {
-          if($scope.dialogs[name])
-            return true;
-          else
-            return false;
-        };
-        $scope.toggleDialog = function(name) {
-          if(!$scope.dialogs[name])
-            $scope.dialogs[name] = true;
-          else
-            $scope.dialogs[name] = false;
-        };
-
-        document.onkeydown = function(evt) {
-          evt = evt || window.event;
-          if (evt.keyCode == 27) {
-            $scope.$apply(function() {
-              for(var key in $scope.dialogs) {
-                $scope.dialogs[key] = false;
-              }
-            });
-          }
-        };
-
-        // Pages
-        Vindig.pages().then(function(data) {
-          $scope.pages = data.data;
-        });
-
-        // Nav
-        $scope.toggleNav = function() {
-          if($scope.showNav) {
-            $scope.showNav = false;
-          } else {
-            $scope.showNav = true;
-          }
-        }
-        $rootScope.$on('$stateChangeStart', function(ev, toState, toParams) {
-          $scope.showNav = false;
-          if(toParams.init && !$scope.initialized) {
-            $scope.init();
-          }
-        });
-
-        $rootScope.$on('$stateChangeSuccess', function() {
-          $scope.embedUrl = $state.href($state.current.name || 'home', $state.params, {absolute: true});
-        });
-
-        $scope.getEmbedUrl = function() {
-          return encodeURIComponent($scope.embedUrl);
-        };
-
-        // Dossiers
-        $scope.toggleDossiers = function() {
-          if($scope.showDossiers) {
-            $scope.showDossiers = false;
-          } else {
-            $scope.showDossiers = true;
-          }
-        }
-        $rootScope.$on('$stateChangeStart', function() {
-          $scope.showDossiers = false;
-        });
-
-        // Adv nav
-        $scope.toggleAdvFilters = function() {
-          if($scope.showAdvFilters) {
-            $scope.showAdvFilters = false;
-          } else {
-            $scope.showAdvFilters = true;
-          }
-        }
-        $rootScope.$on('$stateChangeStart', function() {
-          $scope.showAdvFilters = false;
-        });
-
-        $scope.home = function() {
-          if($state.current.name == 'home')
-            $scope.initialized = false;
-        };
-        $scope.init = function() {
-          $scope.initialized = true;
-          $scope.showList = true;
-        };
-
-        $scope.$watch('initialized', function(init) {
-          if($state.current && $state.current.name) {
-            if(init) {
-              $state.go($state.current.name, {init: true}, {notify: false});
-            } else if($state.params.init) {
-              $state.go($state.current.name, {init: false}, {notify: false});
-            }
-          }
-          $timeout(function() {
-            $rootScope.$broadcast('invalidateMap');
-          }, 200);
-        });
-
-        if($state.current.name == 'home.dossier' || $state.current.name == 'home.dossier.case')
-          $scope.isDossier = true;
-        else
-          $scope.isDossier = false;
-
-        if($state.current.name == 'home.case')
-          $scope.isCase = true;
-        else
-          $scope.isCase = false;
-
-        $rootScope.$on('dossierCases', function(ev, cases) {
-          $scope.dossierCases = cases;
-        });
-
-        if(!$cookies.get('accessed_tour')) {
-          $cookies.put('accessed_tour', 0);
-        }
-        $scope.accessedTour = $cookies.get('accessed_tour');
-
-        $scope.disableTour = function() {
-          $cookies.put('accessed_tour', 1);
-          $scope.accessedTour = 1;
-        };
-
-        $rootScope.$on('$stateChangeSuccess', function(ev, toState, toParams, fromState, fromParams) {
-
-          if(toState.name !== 'home')
-            $scope.initialized = true;
-
-          if(toState.name == 'home.tour') {
-            $scope.showList = true;
-            $cookies.put('accessed_tour', 1);
-            $scope.accessedTour = 1;
-          }
-
-          if(fromState && fromState.name == 'home.case')
-            $rootScope.$broadcast('invalidateMap');
-
-        });
-
-        $rootScope.$on('$stateChangeStart', function(ev, toState, toParams, fromState) {
-
-          if(
-            (
-              toState.name != 'home.dossier' &&
-              toState.name != 'home.dossier.case'
-            )
-          ) {
-            $scope.dossierCases = false;
-          }
-
-          if(toState.name == 'home.dossier' || toState.name == 'home.dossier.case')
-            $scope.isDossier = true;
-          else
-            $scope.isDossier = false;
-
-          if(toState.name == 'home.case')
-            $scope.isCase = true;
-          else
-            $scope.isCase = false;
-
-          if(
-            fromState &&
-            (
-              fromState.name == 'home.dossier' &&
-              toState.name != 'home.dossier.case'
-            ) ||
-            (
-              fromState.name == 'home.dossier.case' &&
-              toState.name != 'home.dossier'
-            )
-          ) {
-            $scope.filter.strict = {};
-          }
-        });
-
-        $scope.$watch('isDossier', function(isDossier, prev) {
-          if(isDossier !== prev) {
-            $rootScope.$broadcast('invalidateMap');
-          }
-        });
-
-        $scope.filtered = [];
-        $scope.casos = [];
-
-        // Async get cases
-        $scope.loading = true;
-        Vindig.cases().then(function(res) {
-            // console.log(res);
-          var promises = [];
-          $scope.casos = res.data;
-          var totalPages = res.headers('X-WP-TotalPages');
-          for(var i = 2; i <= totalPages; i++) {
-            promises.push(Vindig.cases({page: i}));
-            promises[i-2].then(function(res) {
-                // console.log($scope.casos);
-              $scope.casos = $scope.casos.concat(res.data);
-            });
-          }
-          $q.all(promises).then(function() {
-            $scope.loading = false;
-          });
-        });
-
-        $scope.itemsPerPage = 20;
-        $scope.currentPage = 0;
-
-        $scope.prevPage = function() {
-          if ($scope.currentPage > 0) {
-            $scope.currentPage--;
-          }
-        };
-
-        $scope.prevPageDisabled = function() {
-          return $scope.currentPage === 0 ? "disabled" : "";
-        };
-
-        $scope.pageCount = function() {
-          return Math.ceil($scope.filtered.length/$scope.itemsPerPage)-1;
-        };
-
-        $scope.nextPage = function() {
-          if ($scope.currentPage < $scope.pageCount()) {
-            $scope.currentPage++;
-          }
-        };
-
-        $scope.nextPageDisabled = function() {
-          return $scope.currentPage === $scope.pageCount() ? "disabled" : "";
-        };
-
-        $rootScope.$on('nextCase', function(ev, caso) {
-          var i;
-          _.each($scope.filtered, function(c, index) {
-            if(c.ID == caso.ID)
-              i = index;
-          });
-          if(i >= 0 && $scope.filtered[i+1]) {
-            $state.go('home.case', {caseId: $scope.filtered[i+1].ID});
-          }
-        });
-
-        $rootScope.$on('prevCase', function(ev, caso) {
-          var i;
-          _.each($scope.filtered, function(c, index) {
-            if(c.ID == caso.ID)
-              i = index;
-          });
-          if(i >= 0 && $scope.filtered[i-1]) {
-            $state.go('home.case', {caseId: $scope.filtered[i-1].ID});
-          }
-        });
-
-        Vindig.dossiers().then(function(res) {
-          $scope.dossiers = res.data;
-        });
-
-        $scope.filter = {
-          text: '',
-          strict: {},
-          date: {
-            min: 0,
-            max: 0
-          }
-        };
-        $scope.dateFilters = [0,0];
-        $scope.dropdownFilters = {};
-
-        var setFilters = function(casos) {
-
-          var anos = _.sortBy(Vindig.getUniq(casos, 'ano'), function(item) { return parseInt(item); });
-
-          if(anos.length) {
-            if(!$scope.dateFilters[0] || parseInt(_.min(anos)) < $scope.dateFilters[0]) {
-              $scope.dateFilters[0] = parseInt(_.min(anos));
-              $scope.filter.date.min = parseInt(_.min(anos));
-            }
-
-            if(!$scope.dateFilters[1] || parseInt(_.max(anos)) > $scope.dateFilters[1]) {
-              $scope.dateFilters[1] = parseInt(_.max(anos));
-              $scope.filter.date.max = parseInt(_.max(anos));
-            }
-
-            if(!$scope.filter.strict.uf)
-              $scope.dropdownFilters.uf = _.sortBy(Vindig.getUniq(casos, 'uf'), function(item) { return item; });
-
-            if(!$scope.filter.strict.relatorio)
-              $scope.dropdownFilters.relatorio = _.sortBy(Vindig.getUniq(casos, 'relatorio'), function(item) { return item; });
-
-            if(!$scope.filter.strict.povo)
-              $scope.dropdownFilters.povo = _.sortBy(Vindig.getUniq(casos, 'povo'), function(item) { return item; });
-          }
-
-        }
-
-        $scope.$watch('casos', setFilters);
-
-        var filterString = 'casos | filter:filter.text | exact:filter.strict | dateFilter:filter.date | caseIds:dossierCases';
-
-        $rootScope.$on('caseQuery', function(ev, query) {
-          $scope.filter.strict = query;
-        }, true);
-
-        $scope.$watch(filterString, function(casos) {
-          $scope.filtered = casos;
-          setFilters(casos);
-        }, true);
-
-        var csvKeys = [
-          'aldeia',
-          'ano',
-          'apelido',
-          'cod_funai',
-          'cod_ibge',
-          'coordinates',
-          'descricao',
-          'dia',
-          'mes',
-          'ano',
-          'fonte_cimi',
-          'idade',
-          'municipio',
-          'uf',
-          'nome',
-          'povo',
-          'relatorio',
-          'terra_indigena'
-        ];
-        $scope.downloadCasos = function(casos) {
-          var toCsv = [];
-          _.each(casos, function(caso) {
-            var c = {};
-            _.each(csvKeys, function(k) {
-              c[k] = caso[k];
-              if(typeof c[k] == 'string')
-                c[k] = c[k].replace(/"/g, '""');
-            });
-            toCsv.push(c);
-          });
-          JSONToCSV(toCsv, 'casos', true);
-        };
-
-        $scope.clearFilters = function() {
-          $scope.filter.text = '';
-          if(typeof anos != 'undefined' && anos && anos.length) {
-            $scope.filter.date.min = parseInt(_.min(anos));
-            $scope.filter.date.max = parseInt(_.max(anos));
-          }
-          $scope.filter.strict = {};
-        }
-
-        $scope.$on('$stateChangeSuccess', function(ev, toState, toParams, fromState, fromParams) {
-          if(fromState && toState.name == 'home.dossier' && fromState.name != 'home.dossier.case') {
-            $scope.clearFilters();
-          }
-        });
-
-        $scope.focusMap = function(caso) {
-            var geolocatedData = caso.meta._related_point[0];
-            var coordinates = [geolocatedData._geocode_lon, geolocatedData._geocode_lat]
-            // console.log("coordinates", coordinates);
-          $rootScope.$broadcast('focusMap', coordinates);
-        };
-
-        // Case list
-        $scope.showList = false
-        $scope.toggleCasos = function() {
-          if($scope.showList) {
-            $scope.showList = false;
-          } else {
-            $scope.showList = true;
-          }
-        }
-        $scope.$watch('showList', function() {
-          $timeout(function() {
-            $rootScope.$broadcast('invalidateMap');
-          }, 300);
-        });
-      }
-    ]);
-
-    app.controller('HomeCtrl', [
-      '$scope',
-      '$rootScope',
-      '$timeout',
-      'Map',
-      function($scope, $rootScope, $timeout, Map) {
-
-        $scope.$on('$stateChangeSuccess', function(ev, toState) {
-          if(toState.name == 'home' || toState.name == 'home.tour' || toState.name == 'home.case' || toState.name == 'home.page') {
-            $scope.mapData = Map;
-          }
-        });
-
-        $scope.$on('dossierMap', function(ev, map) {
-          $scope.mapData = map;
-        });
-
-      }
-    ]);
-
-    app.controller('DossierCtrl', [
-      '$rootScope',
-      '$timeout',
-      '$scope',
-      '$sce',
-      'Dossier',
-      'DossierMap',
-      '$state',
-      function($rootScope, $timeout, $scope, $sce, Dossier, Map, $state) {
-
-        $scope.url = $state.href('home.dossier', {id: Dossier.data.ID}, {
-          absolute: true
-        });
-
-        $scope.dossier = Dossier.data;
-        $scope.dossier.content = $sce.trustAsHtml($scope.dossier.content);
-        $scope.$emit('dossierMap', Map);
-        $timeout(function() {
-          $rootScope.$broadcast('invalidateMap');
-        }, 300);
-
-        if($scope.dossier.casos && $scope.dossier.casos.length) {
-          $rootScope.$broadcast('dossierCases', $scope.dossier.casos);
-        } else if($scope.dossier.casos_query) {
-          var preQuery = $scope.dossier.casos_query.split(';');
-          var casosQuery = {};
-          _.each(preQuery, function(prop) {
-            if(prop) {
-              kv = prop.split('=');
-              if(kv.length) {
-                if(kv[1].indexOf('/') == 0) {
-                  casosQuery[kv[0].trim()] = new RegExp(kv[1].substring(1, kv[1].length-1));
-                } else {
-                  casosQuery[kv[0].trim()] = kv[1].replace(/"/g, '');
+(function (_, undefined) {
+    module.exports = function (app) {
+        app.controller("TourCtrl", [
+            "$scope",
+            function ($scope) {
+                $scope.total = 5;
+                $scope.step = 1;
+
+                $scope.nextStep = function () {
+                    if ($scope.step < $scope.total) {
+                        $scope.step++;
+                    }
+                };
+                $scope.prevStep = function () {
+                    if ($scope.step > 1) {
+                        $scope.step--;
+                    }
+                };
+                $scope.isStep = function (step) {
+                    return $scope.step == step;
+                };
+            },
+        ]);
+
+        app.controller("MainCtrl", [
+            "$q",
+            "$rootScope",
+            "$scope",
+            "$state",
+            "$timeout",
+            "$cookies",
+            "Vindig",
+            function (
+                $q,
+                $rootScope,
+                $scope,
+                $state,
+                $timeout,
+                $cookies,
+                Vindig
+            ) {
+                $scope.base = vindig.base;
+
+                $scope.dialogs = {};
+                $scope.showDialog = function (name) {
+                    if ($scope.dialogs[name]) return true;
+                    else return false;
+                };
+                $scope.toggleDialog = function (name) {
+                    if (!$scope.dialogs[name]) $scope.dialogs[name] = true;
+                    else $scope.dialogs[name] = false;
+                };
+
+                document.onkeydown = function (evt) {
+                    evt = evt || window.event;
+                    if (evt.keyCode == 27) {
+                        $scope.$apply(function () {
+                            for (var key in $scope.dialogs) {
+                                $scope.dialogs[key] = false;
+                            }
+                        });
+                    }
+                };
+
+                // Pages
+                Vindig.pages().then(function (data) {
+                    $scope.pages = data.data;
+                });
+
+                // Nav
+                $scope.toggleNav = function () {
+                    if ($scope.showNav) {
+                        $scope.showNav = false;
+                    } else {
+                        $scope.showNav = true;
+                    }
+                };
+                $rootScope.$on(
+                    "$stateChangeStart",
+                    function (ev, toState, toParams) {
+                        $scope.showNav = false;
+                        if (toParams.init && !$scope.initialized) {
+                            $scope.init();
+                        }
+                    }
+                );
+
+                $rootScope.$on("$stateChangeSuccess", function () {
+                    $scope.embedUrl = $state.href(
+                        $state.current.name || "home",
+                        $state.params,
+                        { absolute: true }
+                    );
+                });
+
+                $scope.getEmbedUrl = function () {
+                    return encodeURIComponent($scope.embedUrl);
+                };
+
+                // Dossiers
+                $scope.toggleDossiers = function () {
+                    if ($scope.showDossiers) {
+                        $scope.showDossiers = false;
+                    } else {
+                        $scope.showDossiers = true;
+                    }
+                };
+                $rootScope.$on("$stateChangeStart", function () {
+                    $scope.showDossiers = false;
+                });
+
+                // Adv nav
+                $scope.toggleAdvFilters = function () {
+                    if ($scope.showAdvFilters) {
+                        $scope.showAdvFilters = false;
+                    } else {
+                        $scope.showAdvFilters = true;
+                    }
+                };
+                $rootScope.$on("$stateChangeStart", function () {
+                    $scope.showAdvFilters = false;
+                });
+
+                $scope.home = function () {
+                    if ($state.current.name == "home")
+                        $scope.initialized = false;
+                };
+                $scope.init = function () {
+                    $scope.initialized = true;
+                    $scope.showList = true;
+                };
+
+                $scope.$watch("initialized", function (init) {
+                    if ($state.current && $state.current.name) {
+                        if (init) {
+                            $state.go(
+                                $state.current.name,
+                                { init: true },
+                                { notify: false }
+                            );
+                        } else if ($state.params.init) {
+                            $state.go(
+                                $state.current.name,
+                                { init: false },
+                                { notify: false }
+                            );
+                        }
+                    }
+                    $timeout(function () {
+                        $rootScope.$broadcast("invalidateMap");
+                    }, 200);
+                });
+
+                if (
+                    $state.current.name == "home.dossier" ||
+                    $state.current.name == "home.dossier.case"
+                )
+                    $scope.isDossier = true;
+                else $scope.isDossier = false;
+
+                if ($state.current.name == "home.case") $scope.isCase = true;
+                else $scope.isCase = false;
+
+                $rootScope.$on("dossierCases", function (ev, cases) {
+                    $scope.dossierCases = cases;
+                });
+
+                if (!$cookies.get("accessed_tour")) {
+                    $cookies.put("accessed_tour", 0);
                 }
-              }
-            }
-          });
-          $rootScope.$broadcast('caseQuery', casosQuery);
-        }
+                $scope.accessedTour = $cookies.get("accessed_tour");
 
-        $scope.whatsapp = 'whatsapp://send?text=' + encodeURIComponent($scope.dossier.title + ' ' + $scope.url);
-        $scope.base = vindig.base;
+                $scope.disableTour = function () {
+                    $cookies.put("accessed_tour", 1);
+                    $scope.accessedTour = 1;
+                };
 
-        $scope.hiddenContent = false;
-        $scope.toggleContent = function() {
-          if($scope.hiddenContent) {
-            $scope.hiddenContent = false;
-          } else {
-            $scope.hiddenContent = true;
-          }
-        }
+                $rootScope.$on(
+                    "$stateChangeSuccess",
+                    function (ev, toState, toParams, fromState, fromParams) {
+                        if (toState.name !== "home") $scope.initialized = true;
 
-      }
-    ]);
+                        if (toState.name == "home.tour") {
+                            $scope.showList = true;
+                            $cookies.put("accessed_tour", 1);
+                            $scope.accessedTour = 1;
+                        }
 
-    app.controller('CaseCtrl', [
-      '$rootScope',
-      '$state',
-      '$stateParams',
-      '$scope',
-      '$sce',
-      'Case',
-      'Vindig',
-      function($rootScope, $state, $stateParams, $scope, $sce, Case, Vindig) {
-          console.log("Aqui", Case)
-        $scope.caso = Case.data;
-        $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
-        $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
-        if($stateParams.focus != false) {
-          $rootScope.$broadcast('focusMap', $scope.caso.coordinates);
-        }
-        $rootScope.$broadcast('invalidateMap');
+                        if (fromState && fromState.name == "home.case")
+                            $rootScope.$broadcast("invalidateMap");
+                    }
+                );
 
-        $scope.report = function(message) {
-          Vindig.report($scope.caso.ID, message)
-          .success(function(data) {
-            $scope.reported = true;
-          })
-          .error(function(err) {
-            console.log(err);
-          });
-        };
+                $rootScope.$on(
+                    "$stateChangeStart",
+                    function (ev, toState, toParams, fromState) {
+                        if (
+                            toState.name != "home.dossier" &&
+                            toState.name != "home.dossier.case"
+                        ) {
+                            $scope.dossierCases = false;
+                        }
 
-        $scope.close = function() {
-          if($state.current.name.indexOf('dossier') !== -1) {
-            $state.go('home.dossier', $state.current.params);
-          } else {
-            $state.go('home');
-          }
-        };
+                        if (
+                            toState.name == "home.dossier" ||
+                            toState.name == "home.dossier.case"
+                        )
+                            $scope.isDossier = true;
+                        else $scope.isDossier = false;
 
-        $scope.next = function() {
-          $rootScope.$broadcast('nextCase', $scope.caso);
-        };
+                        if (toState.name == "home.case") $scope.isCase = true;
+                        else $scope.isCase = false;
 
-        $scope.prev = function() {
-          $rootScope.$broadcast('prevCase', $scope.caso);
-        };
+                        if (
+                            (fromState &&
+                                fromState.name == "home.dossier" &&
+                                toState.name != "home.dossier.case") ||
+                            (fromState.name == "home.dossier.case" &&
+                                toState.name != "home.dossier")
+                        ) {
+                            $scope.filter.strict = {};
+                        }
+                    }
+                );
 
-      }
-    ]);
+                $scope.$watch("isDossier", function (isDossier, prev) {
+                    if (isDossier !== prev) {
+                        $rootScope.$broadcast("invalidateMap");
+                    }
+                });
 
-    app.controller('PageCtrl', [
-      '$scope',
-      '$sce',
-      'Page',
-      'Vindig',
-      function($scope, $sce, Page, Vindig) {
-        $scope.page = Page.data;
-        $scope.page.content = $sce.trustAsHtml($scope.page.content);
+                $scope.filtered = [];
+                $scope.casos = [];
 
-        $scope.contacted = false;
-        $scope.contacting = false;
-        $scope.contact = function(message) {
-          if(!$scope.contacting) {
-            $scope.contacting = true;
-            Vindig.contact(message)
-            .success(function(data) {
-              $scope.contacted = true;
-              $scope.contacting = false;
-            })
-            .error(function(err) {
-              console.log(err);
-            });
-          }
-        };
-      }
-    ]);
+                // Async get cases
+                $scope.loading = true;
+                Vindig.cases().then(function (res) {
+                    // console.log(res);
+                    var promises = [];
+                    $scope.casos = res.data;
+                    var totalPages = res.headers("X-WP-TotalPages");
+                    for (var i = 2; i <= totalPages; i++) {
+                        promises.push(Vindig.cases({ page: i }));
+                        promises[i - 2].then(function (res) {
+                            // console.log($scope.casos);
+                            $scope.casos = $scope.casos.concat(res.data);
+                        });
+                    }
+                    $q.all(promises).then(function () {
+                        $scope.loading = false;
+                    });
+                });
 
-  };
+                $scope.itemsPerPage = 20;
+                $scope.currentPage = 0;
 
+                $scope.prevPage = function () {
+                    if ($scope.currentPage > 0) {
+                        $scope.currentPage--;
+                    }
+                };
+
+                $scope.prevPageDisabled = function () {
+                    return $scope.currentPage === 0 ? "disabled" : "";
+                };
+
+                $scope.pageCount = function () {
+                    return (
+                        Math.ceil(
+                            $scope.filtered.length / $scope.itemsPerPage
+                        ) - 1
+                    );
+                };
+
+                $scope.nextPage = function () {
+                    if ($scope.currentPage < $scope.pageCount()) {
+                        $scope.currentPage++;
+                    }
+                };
+
+                $scope.nextPageDisabled = function () {
+                    return $scope.currentPage === $scope.pageCount()
+                        ? "disabled"
+                        : "";
+                };
+
+                $rootScope.$on("nextCase", function (ev, caso) {
+                    var i;
+                    _.each($scope.filtered, function (c, index) {
+                        if (c.ID == caso.ID) i = index;
+                    });
+                    if (i >= 0 && $scope.filtered[i + 1]) {
+                        $state.go("home.case", {
+                            caseId: $scope.filtered[i + 1].ID,
+                        });
+                    }
+                });
+
+                $rootScope.$on("prevCase", function (ev, caso) {
+                    var i;
+                    _.each($scope.filtered, function (c, index) {
+                        if (c.ID == caso.ID) i = index;
+                    });
+                    if (i >= 0 && $scope.filtered[i - 1]) {
+                        $state.go("home.case", {
+                            caseId: $scope.filtered[i - 1].ID,
+                        });
+                    }
+                });
+
+                Vindig.dossiers().then(function (res) {
+                    $scope.dossiers = res.data;
+                });
+
+                $scope.filter = {
+                    text: "",
+                    strict: {},
+                    date: {
+                        min: 0,
+                        max: 0,
+                    },
+                };
+                $scope.dateFilters = [0, 0];
+                $scope.dropdownFilters = {};
+
+                var setFilters = function (casos) {
+                    var anos = _.sortBy(
+                        Vindig.getUniq(casos, "ano"),
+                        function (item) {
+                            return parseInt(item);
+                        }
+                    );
+
+                    if (anos.length) {
+                        if (
+                            !$scope.dateFilters[0] ||
+                            parseInt(_.min(anos)) < $scope.dateFilters[0]
+                        ) {
+                            $scope.dateFilters[0] = parseInt(_.min(anos));
+                            $scope.filter.date.min = parseInt(_.min(anos));
+                        }
+
+                        if (
+                            !$scope.dateFilters[1] ||
+                            parseInt(_.max(anos)) > $scope.dateFilters[1]
+                        ) {
+                            $scope.dateFilters[1] = parseInt(_.max(anos));
+                            $scope.filter.date.max = parseInt(_.max(anos));
+                        }
+
+                        if (!$scope.filter.strict.uf)
+                            $scope.dropdownFilters.uf = _.sortBy(
+                                Vindig.getUniq(casos, "uf"),
+                                function (item) {
+                                    return item;
+                                }
+                            );
+
+                        if (!$scope.filter.strict.relatorio)
+                            $scope.dropdownFilters.relatorio = _.sortBy(
+                                Vindig.getUniq(casos, "relatorio"),
+                                function (item) {
+                                    return item;
+                                }
+                            );
+
+                        if (!$scope.filter.strict.povo)
+                            $scope.dropdownFilters.povo = _.sortBy(
+                                Vindig.getUniq(casos, "povo"),
+                                function (item) {
+                                    return item;
+                                }
+                            );
+                    }
+                };
+
+                $scope.$watch("casos", setFilters);
+
+                var filterString =
+                    "casos | filter:filter.text | exact:filter.strict | dateFilter:filter.date | caseIds:dossierCases";
+
+                $rootScope.$on(
+                    "caseQuery",
+                    function (ev, query) {
+                        $scope.filter.strict = query;
+                    },
+                    true
+                );
+
+                $scope.$watch(
+                    filterString,
+                    function (casos) {
+                        $scope.filtered = casos;
+                        setFilters(casos);
+                    },
+                    true
+                );
+
+                var csvKeys = [
+                    "aldeia",
+                    "ano",
+                    "apelido",
+                    "cod_funai",
+                    "cod_ibge",
+                    "coordinates",
+                    "descricao",
+                    "dia",
+                    "mes",
+                    "ano",
+                    "fonte_cimi",
+                    "idade",
+                    "municipio",
+                    "uf",
+                    "nome",
+                    "povo",
+                    "relatorio",
+                    "terra_indigena",
+                ];
+                $scope.downloadCasos = function (casos) {
+                    var toCsv = [];
+                    _.each(casos, function (caso) {
+                        var c = {};
+                        _.each(csvKeys, function (k) {
+                            c[k] = caso[k];
+                            if (typeof c[k] == "string")
+                                c[k] = c[k].replace(/"/g, '""');
+                        });
+                        toCsv.push(c);
+                    });
+                    JSONToCSV(toCsv, "casos", true);
+                };
+
+                $scope.clearFilters = function () {
+                    $scope.filter.text = "";
+                    if (typeof anos != "undefined" && anos && anos.length) {
+                        $scope.filter.date.min = parseInt(_.min(anos));
+                        $scope.filter.date.max = parseInt(_.max(anos));
+                    }
+                    $scope.filter.strict = {};
+                };
+
+                $scope.$on(
+                    "$stateChangeSuccess",
+                    function (ev, toState, toParams, fromState, fromParams) {
+                        if (
+                            fromState &&
+                            toState.name == "home.dossier" &&
+                            fromState.name != "home.dossier.case"
+                        ) {
+                            $scope.clearFilters();
+                        }
+                    }
+                );
+
+                $scope.focusMap = function (caso) {
+                    var geolocatedData = caso.meta._related_point[0];
+                    var coordinates = [
+                        geolocatedData._geocode_lon,
+                        geolocatedData._geocode_lat,
+                    ];
+                    // console.log("coordinates", coordinates);
+                    $rootScope.$broadcast("focusMap", coordinates);
+                };
+
+                // Case list
+                $scope.showList = false;
+                $scope.toggleCasos = function () {
+                    if ($scope.showList) {
+                        $scope.showList = false;
+                    } else {
+                        $scope.showList = true;
+                    }
+                };
+                $scope.$watch("showList", function () {
+                    $timeout(function () {
+                        $rootScope.$broadcast("invalidateMap");
+                    }, 300);
+                });
+            },
+        ]);
+
+        app.controller("HomeCtrl", [
+            "$scope",
+            "$rootScope",
+            "$timeout",
+            "Map",
+            function ($scope, $rootScope, $timeout, Map) {
+                $scope.$on("$stateChangeSuccess", function (ev, toState) {
+                    if (
+                        toState.name == "home" ||
+                        toState.name == "home.tour" ||
+                        toState.name == "home.case" ||
+                        toState.name == "home.page"
+                    ) {
+                        $scope.mapData = Map;
+                    }
+                });
+
+                $scope.$on("dossierMap", function (ev, map) {
+                    $scope.mapData = map;
+                });
+            },
+        ]);
+
+        app.controller("DossierCtrl", [
+            "$rootScope",
+            "$timeout",
+            "$scope",
+            "$sce",
+            "Dossier",
+            "DossierMap",
+            "$state",
+            function (
+                $rootScope,
+                $timeout,
+                $scope,
+                $sce,
+                Dossier,
+                Map,
+                $state
+            ) {
+                $scope.url = $state.href(
+                    "home.dossier",
+                    { id: Dossier.data.ID },
+                    {
+                        absolute: true,
+                    }
+                );
+
+                $scope.dossier = Dossier.data;
+                $scope.dossier.content = $sce.trustAsHtml(
+                    $scope.dossier.content
+                );
+                $scope.$emit("dossierMap", Map);
+                $timeout(function () {
+                    $rootScope.$broadcast("invalidateMap");
+                }, 300);
+
+                if ($scope.dossier.casos && $scope.dossier.casos.length) {
+                    $rootScope.$broadcast("dossierCases", $scope.dossier.casos);
+                } else if ($scope.dossier.casos_query) {
+                    var preQuery = $scope.dossier.casos_query.split(";");
+                    var casosQuery = {};
+                    _.each(preQuery, function (prop) {
+                        if (prop) {
+                            kv = prop.split("=");
+                            if (kv.length) {
+                                if (kv[1].indexOf("/") == 0) {
+                                    casosQuery[kv[0].trim()] = new RegExp(
+                                        kv[1].substring(1, kv[1].length - 1)
+                                    );
+                                } else {
+                                    casosQuery[kv[0].trim()] = kv[1].replace(
+                                        /"/g,
+                                        ""
+                                    );
+                                }
+                            }
+                        }
+                    });
+                    $rootScope.$broadcast("caseQuery", casosQuery);
+                }
+
+                $scope.whatsapp =
+                    "whatsapp://send?text=" +
+                    encodeURIComponent($scope.dossier.title + " " + $scope.url);
+                $scope.base = vindig.base;
+
+                $scope.hiddenContent = false;
+                $scope.toggleContent = function () {
+                    if ($scope.hiddenContent) {
+                        $scope.hiddenContent = false;
+                    } else {
+                        $scope.hiddenContent = true;
+                    }
+                };
+            },
+        ]);
+
+        app.controller("CaseCtrl", [
+            "$rootScope",
+            "$state",
+            "$stateParams",
+            "$scope",
+            "$sce",
+            "Case",
+            "Vindig",
+            function (
+                $rootScope,
+                $state,
+                $stateParams,
+                $scope,
+                $sce,
+                Case,
+                Vindig
+            ) {
+                console.log("Aqui", Case);
+                $scope.caso = Case.data;
+                $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
+                $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
+                if ($stateParams.focus != false) {
+                    $rootScope.$broadcast("focusMap", $scope.caso.coordinates);
+                }
+                $rootScope.$broadcast("invalidateMap");
+
+                $scope.report = function (message) {
+                    Vindig.report($scope.caso.ID, message)
+                        .success(function (data) {
+                            $scope.reported = true;
+                        })
+                        .error(function (err) {
+                            console.log(err);
+                        });
+                };
+
+                $scope.close = function () {
+                    if ($state.current.name.indexOf("dossier") !== -1) {
+                        $state.go("home.dossier", $state.current.params);
+                    } else {
+                        $state.go("home");
+                    }
+                };
+
+                $scope.next = function () {
+                    $rootScope.$broadcast("nextCase", $scope.caso);
+                };
+
+                $scope.prev = function () {
+                    $rootScope.$broadcast("prevCase", $scope.caso);
+                };
+            },
+        ]);
+
+        app.controller("PageCtrl", [
+            "$scope",
+            "$sce",
+            "Page",
+            "Vindig",
+            function ($scope, $sce, Page, Vindig) {
+                $scope.page = Page.data;
+                $scope.page.content = $sce.trustAsHtml($scope.page.content);
+
+                $scope.contacted = false;
+                $scope.contacting = false;
+                $scope.contact = function (message) {
+                    if (!$scope.contacting) {
+                        $scope.contacting = true;
+                        Vindig.contact(message)
+                            .success(function (data) {
+                                $scope.contacted = true;
+                                $scope.contacting = false;
+                            })
+                            .error(function (err) {
+                                console.log(err);
+                            });
+                    }
+                };
+            },
+        ]);
+    };
 })(window._);
 
 },{}],2:[function(require,module,exports){
-(function(vindig, jQuery, L, undefined) {
+(function (vindig, jQuery, L, undefined) {
+    L.mapbox.accessToken =
+        "pk.eyJ1IjoiaW5mb2FtYXpvbmlhIiwiYSI6InItajRmMGsifQ.JnRnLDiUXSEpgn7bPDzp7g";
 
-  L.mapbox.accessToken = "pk.eyJ1IjoiaW5mb2FtYXpvbmlhIiwiYSI6InItajRmMGsifQ.JnRnLDiUXSEpgn7bPDzp7g"
+    module.exports = function (app) {
+        app.directive("tourFocus", [
+            function () {
+                return {
+                    restrict: "A",
+                    scope: {
+                        sel: "=tourFocus",
+                        direction: "=",
+                        active: "=",
+                    },
+                    link: function (scope, element, attrs) {
+                        var width, height, offset;
 
-  module.exports = function(app) {
+                        var focus = jQuery(scope.sel);
 
-    app.directive('tourFocus', [
-      function() {
-        return {
-          restrict: 'A',
-          scope: {
-            'sel': '=tourFocus',
-            'direction': '=',
-            'active': '='
-          },
-          link: function(scope, element, attrs) {
+                        var el = jQuery(element);
+                        var desc = el.find(".step-description");
+                        var arrow = el.find(".arrow");
 
-            var width, height, offset;
+                        el.addClass(scope.direction);
 
-            var focus = jQuery(scope.sel);
+                        var set = function () {
+                            width = focus.innerWidth();
+                            height = focus.innerHeight();
+                            offset = focus.offset();
+                            el.css({
+                                width: width,
+                                height: height,
+                                top: offset.top,
+                                left: offset.left,
+                            });
+                            if (scope.direction == "right") {
+                                desc.css({
+                                    top: offset.top - 10,
+                                    left: offset.left,
+                                    "margin-left": -320,
+                                });
+                                arrow.css({
+                                    top: offset.top,
+                                    left: offset.left,
+                                    "margin-top": 10,
+                                    "margin-left": -40,
+                                });
+                            } else if (scope.direction == "left") {
+                                desc.css({
+                                    top: offset.top - 10,
+                                    left: width,
+                                    "margin-left": 30,
+                                });
+                                arrow.css({
+                                    top: offset.top,
+                                    left: width,
+                                    "margin-top": 10,
+                                    "margin-left": 20,
+                                });
+                            } else if (scope.direction == "top") {
+                                desc.css({
+                                    bottom:
+                                        jQuery(window).height() -
+                                        offset.top +
+                                        30,
+                                    left: parseLeft(
+                                        offset.left + width / 2 - 290 / 2
+                                    ),
+                                });
+                                arrow.css({
+                                    bottom:
+                                        jQuery(window).height() - offset.top,
+                                    left: offset.left + width / 2,
+                                    "margin-bottom": 20,
+                                    "margin-left": -10,
+                                });
+                            } else if (scope.direction == "bottom") {
+                                desc.css({
+                                    top: offset.top + height,
+                                    left: parseLeft(
+                                        offset.left + width / 2 - 290 / 2
+                                    ),
+                                    "margin-top": 30,
+                                });
+                                arrow.css({
+                                    top: offset.top + height,
+                                    left: offset.left + width / 2,
+                                    "margin-top": 20,
+                                    "margin-left": -10,
+                                });
+                            }
+                        };
+                        function parseLeft(number) {
+                            max = jQuery(window).width() - desc.innerWidth();
+                            if (number < 0) return 0;
+                            else if (number > max) return max;
+                            else return number;
+                        }
+                        set();
+                        scope.$watch(
+                            "active",
+                            _.debounce(function () {
+                                set();
+                            }, 400)
+                        );
+                        jQuery(window).resize(set);
+                    },
+                };
+            },
+        ]);
 
-            var el = jQuery(element);
-            var desc = el.find('.step-description');
-            var arrow = el.find('.arrow');
-
-            el.addClass(scope.direction);
-
-            var set = function() {
-              width = focus.innerWidth();
-              height = focus.innerHeight();
-              offset = focus.offset();
-              el.css({
-                width: width,
-                height: height,
-                top: offset.top,
-                left: offset.left
-              });
-              if(scope.direction == 'right') {
-                desc.css({
-                  top: offset.top - 10,
-                  left: offset.left,
-                  'margin-left': -320
-                });
-                arrow.css({
-                  top: offset.top,
-                  left: offset.left,
-                  'margin-top': 10,
-                  'margin-left': -40
-                });
-              } else if(scope.direction == 'left') {
-                desc.css({
-                  top: offset.top - 10,
-                  left: width,
-                  'margin-left': 30
-                });
-                arrow.css({
-                  top: offset.top,
-                  left: width,
-                  'margin-top': 10,
-                  'margin-left': 20
-                });
-              } else if(scope.direction == 'top') {
-                desc.css({
-                  bottom: (jQuery(window).height() - offset.top) + 30,
-                  left: parseLeft((offset.left + (width/2)) - (290/2))
-                });
-                arrow.css({
-                  bottom: jQuery(window).height() - offset.top,
-                  left: offset.left + (width/2),
-                  'margin-bottom': 20,
-                  'margin-left': -10
-                });
-              } else if(scope.direction == 'bottom') {
-                desc.css({
-                  top: offset.top + height,
-                  left: parseLeft((offset.left + (width/2)) - (290/2)),
-                  'margin-top': 30
-                });
-                arrow.css({
-                  top: offset.top + height,
-                  left: offset.left + (width/2),
-                  'margin-top': 20,
-                  'margin-left': -10
-                });
-              }
-            }
-            function parseLeft(number) {
-              max = jQuery(window).width() - desc.innerWidth();
-              if(number < 0)
-                return 0;
-              else if(number > max)
-                return max;
-              else
-                return number;
-            }
-            set();
-            scope.$watch('active', _.debounce(function() {
-              set();
-            }, 400));
-            jQuery(window).resize(set);
-          }
-        }
-      }
-    ]);
-
-    app.directive('scrollUp', [
-      function() {
-        return {
-          restrict: 'A',
-          scope: {
-            'scrollUp': '='
-          },
-          link: function(scope, element, attrs) {
-            var el = jQuery(scope.scrollUp);
-            jQuery(element).on('click', function() {
-              el.scrollTop(0);
-            });
-          }
-        }
-      }
-    ]);
-
-    app.directive('attachToContent', [
-      function() {
-        return {
-          restrict: 'A',
-          scope: {
-            sel: '=attachToContent'
-          },
-          link: function(scope, element, attrs) {
-            var el = jQuery(scope.sel || '.single');
-            jQuery(window).resize(function() {
-              jQuery(element).css({
-                left: (el.offset().left + el.width()) + 'px'
-              });
-            });
-            jQuery(window).resize();
-          }
-        }
-      }
-    ]);
-
-    app.directive('tagExternal', [
-      '$timeout',
-      function($timeout) {
-        return {
-          restrict: 'A',
-          link: function(scope, element, attrs) {
-            function isExternal(url) {
-              var match = url.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);
-              if (typeof match[1] === "string" && match[1].length > 0 && match[1].toLowerCase() !== location.protocol) return true;
-              if (typeof match[2] === "string" && match[2].length > 0 && match[2].replace(new RegExp(":("+{"http:":80,"https:":443}[location.protocol]+")?$"), "") !== location.host) return true;
-              return false;
-            }
-            $timeout(function() {
-              jQuery(element).find('a').each(function() {
-                if(!jQuery(this).parents('.share').length) {
-                  if(isExternal(jQuery(this).attr('href')))
-                    jQuery(this).addClass('external').attr({
-                      'rel': 'external',
-                      'target': '_blank'
-                    });
-                }
-              });
-            }, 200);
-          }
-        }
-      }
-    ])
-
-    app.directive('forceOnclick', [
-      function() {
-        return {
-          restrict: 'A',
-          scope: {
-            'forceOnclick': '=',
-            'forceParent': '@'
-          },
-          link: function(scope, element, attrs) {
-            var ms = scope.forceOnclick || 500;
-            var el;
-            if(scope.forceParent) {
-              el = jQuery('#' + scope.forceParent);
-            } else {
-              el = jQuery(element);
-            }
-            var handler = function(e) {
-              el.removeClass('force');
-              if(e.type && e.type == 'mousemove') {
-                jQuery(document).unbind('mousemove', handler);
-              }
-            };
-            jQuery(element).on('click', function() {
-              el.addClass('force');
-              if(ms == 'move') {
-                jQuery(document).on('mousemove', handler);
-              } else {
-                setTimeout(handler, ms);
-              }
-            });
-          }
-        }
-      }
-    ])
-
-    app.directive('map', [
-      '$rootScope',
-      '$state',
-      'Vindig',
-      function($rootScope, $state, Vindig) {
-        return {
-          restrict: 'E',
-          scope: {
-            'mapData': '=',
-            'markers': '=',
-            'heatMarker': '='
-          },
-          link: function(scope, element, attrs) {
-
-            function getLocStr() {
-              var center = map.getCenter();
-              var zoom = map.getZoom();
-              var loc = [];
-              loc.push(center.lat);
-              loc.push(center.lng);
-              loc.push(zoom);
-              return loc.join(',');
-            }
-
-            function getStateLoc() {
-              if($state.params.loc)
-                return $state.params.loc.split(',');
-              else
-                return [];
-            }
-
-            angular.element(element)
-              .append('<div id="' + attrs.id + '"></div>')
-              .attr('id', '');
-
-            var loc = getStateLoc();
-
-            var center = [0,0];
-            var zoom = 2;
-
-            if(loc.length) {
-              center = [loc[0], loc[1]];
-              zoom = loc[2];
-            }
-
-            var map = L.map(attrs.id, {
-              fullscreenControl: true,
-              center: center,
-              zoom: zoom,
-              maxZoom: 18
-            });
-
-            map.attributionControl.setPrefix('');
-
-            var prevLocStr;
-            var doMove = true;
-            $rootScope.$on('$stateChangeStart', function() {
-              doMove = false;
-            });
-            $rootScope.$on('$stateChangeSuccess', function() {
-              doMove = true;
-            });
-            map.on('move', _.debounce(function() {
-              scope.$apply(function() {
-                if(doMove) {
-                  var locStr = getLocStr();
-                  if(locStr != prevLocStr)
-                    $state.go($state.current.name, {loc: getLocStr()}, {notify: false, location: 'replace'});
-                  prevLocStr = getLocStr();
-                }
-              });
-            }, 1000));
-
-            // watch map invalidation
-            $rootScope.$on('invalidateMap', function() {
-              setTimeout(function() {
-                map.invalidateSize(true);
-              }, 15);
-            });
-
-            // watch focus map
-            var calledFocus;
-            $rootScope.$on('focusMap', function(ev, coordinates) {
-              calledFocus = coordinates;
-              map.fitBounds(L.latLngBounds([[coordinates[1], coordinates[0]]]));
-            });
-
-            /*
-             * Map data
-             */
-            scope.mapData = false;
-            var mapInit = false;
-            scope.$watch('mapData', function(mapData, prev) {
-              if(mapData.ID !== prev.ID || !mapInit) {
-                mapInit = true;
-                scope.layers = mapData.layers;
-                setTimeout(function() {
-
-                  if(mapData.min_zoom)
-                    map.options.minZoom = parseInt(mapData.min_zoom);
-                  else
-                    map.options.minZoom = 1;
-
-                  if(mapData.max_zoom)
-                    map.options.maxZoom = parseInt(mapData.max_zoom);
-                  else
-                    map.options.maxZoom = 18;
-
-                  if(!loc.length && mapData.ID !== prev.ID) {
-                    setTimeout(function() {
-                      map.setView(mapData.center, mapData.zoom, {
-                        reset: true
-                      });
-                      map.setZoom(mapData.zoom);
-                      setTimeout(function() {
-                        map.setView(mapData.center, mapData.zoom, {
-                          reset: true
+        app.directive("scrollUp", [
+            function () {
+                return {
+                    restrict: "A",
+                    scope: {
+                        scrollUp: "=",
+                    },
+                    link: function (scope, element, attrs) {
+                        var el = jQuery(scope.scrollUp);
+                        jQuery(element).on("click", function () {
+                            el.scrollTop(0);
                         });
-                        map.setZoom(mapData.zoom);
-                      }, 100);
-                    }, 200);
-                  }
+                    },
+                };
+            },
+        ]);
 
-                  setTimeout(function() {
-                    if(mapData.pan_limits) {
-                      map.setMaxBounds(L.latLngBounds(
-                        [
-                          mapData.pan_limits.south,
-                          mapData.pan_limits.west
-                        ],
-                        [
-                          mapData.pan_limits.north,
-                          mapData.pan_limits.east
-                        ]
-                      ));
-                    }
-                  }, 400);
+        app.directive("attachToContent", [
+            function () {
+                return {
+                    restrict: "A",
+                    scope: {
+                        sel: "=attachToContent",
+                    },
+                    link: function (scope, element, attrs) {
+                        var el = jQuery(scope.sel || ".single");
+                        jQuery(window).resize(function () {
+                            jQuery(element).css({
+                                left: el.offset().left + el.width() + "px",
+                            });
+                        });
+                        jQuery(window).resize();
+                    },
+                };
+            },
+        ]);
 
-                }, 200);
-              }
-            });
+        app.directive("tagExternal", [
+            "$timeout",
+            function ($timeout) {
+                return {
+                    restrict: "A",
+                    link: function (scope, element, attrs) {
+                        function isExternal(url) {
+                            var match = url.match(
+                                /^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/
+                            );
+                            if (
+                                typeof match[1] === "string" &&
+                                match[1].length > 0 &&
+                                match[1].toLowerCase() !== location.protocol
+                            )
+                                return true;
+                            if (
+                                typeof match[2] === "string" &&
+                                match[2].length > 0 &&
+                                match[2].replace(
+                                    new RegExp(
+                                        ":(" +
+                                            { "http:": 80, "https:": 443 }[
+                                                location.protocol
+                                            ] +
+                                            ")?$"
+                                    ),
+                                    ""
+                                ) !== location.host
+                            )
+                                return true;
+                            return false;
+                        }
+                        $timeout(function () {
+                            jQuery(element)
+                                .find("a")
+                                .each(function () {
+                                    if (
+                                        !jQuery(this).parents(".share").length
+                                    ) {
+                                        if (
+                                            isExternal(
+                                                jQuery(this).attr("href")
+                                            )
+                                        )
+                                            jQuery(this)
+                                                .addClass("external")
+                                                .attr({
+                                                    rel: "external",
+                                                    target: "_blank",
+                                                });
+                                    }
+                                });
+                        }, 200);
+                    },
+                };
+            },
+        ]);
 
-            /*
-             * Markers
-             */
-            var icon = L.divIcon({
-              className: 'pin',
-              iconSize: [18,18],
-              iconAnchor: [9, 18],
-              popupAnchor: [0, -18]
-            });
+        app.directive("forceOnclick", [
+            function () {
+                return {
+                    restrict: "A",
+                    scope: {
+                        forceOnclick: "=",
+                        forceParent: "@",
+                    },
+                    link: function (scope, element, attrs) {
+                        var ms = scope.forceOnclick || 500;
+                        var el;
+                        if (scope.forceParent) {
+                            el = jQuery("#" + scope.forceParent);
+                        } else {
+                            el = jQuery(element);
+                        }
+                        var handler = function (e) {
+                            el.removeClass("force");
+                            if (e.type && e.type == "mousemove") {
+                                jQuery(document).unbind("mousemove", handler);
+                            }
+                        };
+                        jQuery(element).on("click", function () {
+                            el.addClass("force");
+                            if (ms == "move") {
+                                jQuery(document).on("mousemove", handler);
+                            } else {
+                                setTimeout(handler, ms);
+                            }
+                        });
+                    },
+                };
+            },
+        ]);
 
-            var markerLayer = L.markerClusterGroup({
-              zIndex: 100,
-              maxClusterRadius: 40,
-              polygonOptions: {
-                fillColor: '#000',
-                color: '#000',
-                opacity: .3,
-                weight: 2
-              },
-              spiderLegPolylineOptions: {
-                weight: 1,
-                color: '#222',
-                opacity: 0.4
-              },
-              iconCreateFunction: function(cluster) {
+        app.directive("map", [
+            "$rootScope",
+            "$state",
+            "Vindig",
+            function ($rootScope, $state, Vindig) {
+                return {
+                    restrict: "E",
+                    scope: {
+                        mapData: "=",
+                        markers: "=",
+                        heatMarker: "=",
+                    },
+                    link: function (scope, element, attrs) {
+                        function getLocStr() {
+                            var center = map.getCenter();
+                            var zoom = map.getZoom();
+                            var loc = [];
+                            loc.push(center.lat);
+                            loc.push(center.lng);
+                            loc.push(zoom);
+                            return loc.join(",");
+                        }
 
-                var childCount = cluster.getChildCount();
+                        function getStateLoc() {
+                            if ($state.params.loc)
+                                return $state.params.loc.split(",");
+                            else return [];
+                        }
 
-                var c = ' marker-cluster-';
-                if (childCount < 10) {
-                  c += 'small';
-                } else if (childCount < 100) {
-                  c += 'medium';
-                } else {
-                  c += 'large';
-                }
+                        angular
+                            .element(element)
+                            .append('<div id="' + attrs.id + '"></div>')
+                            .attr("id", "");
 
-                var icon = L.divIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+                        var loc = getStateLoc();
 
-                return icon;
+                        var center = [0, 0];
+                        var zoom = 2;
 
-              }
-            });
+                        if (loc.length) {
+                            center = [loc[0], loc[1]];
+                            zoom = loc[2];
+                        }
 
-            markerLayer.addTo(map);
+                        var map = L.map(attrs.id, {
+                            fullscreenControl: true,
+                            center: center,
+                            zoom: zoom,
+                            maxZoom: 18,
+                        });
 
-            if(scope.heatMarker) {
-              var heatLayer = L.heatLayer([], {
-                blur: 30
-              });
-              heatLayer.addTo(map);
-            }
+                        map.attributionControl.setPrefix("");
 
-            var markers = [];
-            var latlngs = [];
-            scope.$watch('markers', _.debounce(function(posts) {
-              for(var key in markers) {
-                markerLayer.removeLayer(markers[key]);
-              }
-              markers = [];
-              latlngs = [];
-              for(var key in posts) {
-                var post = posts[key];
-                latlngs.push([post.lat,post.lng]);
-                markers[key] = L.marker([post.lat,post.lng], {
-                  icon: icon
-                });
-                markers[key].post = post;
-                markers[key].bindPopup(post.message);
-                markers[key].on('mouseover', function(ev) {
-                  ev.target.openPopup();
-                });
-                markers[key].on('mouseout', function(ev) {
-                  ev.target.closePopup();
-                });
-                markers[key].on('click', function(ev) {
-                  var params =  _.extend({
-                    focus: false
-                  }, ev.target.post.state.params);
-                  var to = 'home.case';
-                  if($state.current.name.indexOf('dossier') !== -1)
-                    to = 'home.dossier.case';
-                  $state.go(to, params);
-                });
-              }
-              for(var key in markers) {
-                markers[key].addTo(markerLayer);
-              }
-              if(scope.heatMarker)
-                heatLayer.setLatLngs(latlngs);
-            }, 300), true);
+                        var prevLocStr;
+                        var doMove = true;
+                        $rootScope.$on("$stateChangeStart", function () {
+                            doMove = false;
+                        });
+                        $rootScope.$on("$stateChangeSuccess", function () {
+                            doMove = true;
+                        });
+                        map.on(
+                            "move",
+                            _.debounce(function () {
+                                scope.$apply(function () {
+                                    if (doMove) {
+                                        var locStr = getLocStr();
+                                        if (locStr != prevLocStr)
+                                            $state.go(
+                                                $state.current.name,
+                                                { loc: getLocStr() },
+                                                {
+                                                    notify: false,
+                                                    location: "replace",
+                                                }
+                                            );
+                                        prevLocStr = getLocStr();
+                                    }
+                                });
+                            }, 1000)
+                        );
 
-            /*
-             * Layers
-             */
+                        // watch map invalidation
+                        $rootScope.$on("invalidateMap", function () {
+                            setTimeout(function () {
+                                map.invalidateSize(true);
+                            }, 15);
+                        });
 
-            scope.layers = [];
+                        // watch focus map
+                        var calledFocus;
+                        $rootScope.$on("focusMap", function (ev, coordinates) {
+                            calledFocus = coordinates;
+                            map.fitBounds(
+                                L.latLngBounds([
+                                    [coordinates[1], coordinates[0]],
+                                ])
+                            );
+                        });
 
-            var fixed = [];
-            var swapable = [];
-            var switchable = [];
+                        /*
+                         * Map data
+                         */
+                        scope.mapData = false;
+                        var mapInit = false;
+                        scope.$watch("mapData", function (mapData, prev) {
+                            if (mapData.ID !== prev.ID || !mapInit) {
+                                mapInit = true;
+                                scope.layers = mapData.layers;
+                                setTimeout(function () {
+                                    if (mapData.min_zoom)
+                                        map.options.minZoom = parseInt(
+                                            mapData.min_zoom
+                                        );
+                                    else map.options.minZoom = 1;
 
-            var layerMap = {};
+                                    if (mapData.max_zoom)
+                                        map.options.maxZoom = parseInt(
+                                            mapData.max_zoom
+                                        );
+                                    else map.options.maxZoom = 18;
 
-            var collapsed = false;
+                                    if (!loc.length && mapData.ID !== prev.ID) {
+                                        setTimeout(function () {
+                                            map.setView(
+                                                mapData.center,
+                                                mapData.zoom,
+                                                {
+                                                    reset: true,
+                                                }
+                                            );
+                                            map.setZoom(mapData.zoom);
+                                            setTimeout(function () {
+                                                map.setView(
+                                                    mapData.center,
+                                                    mapData.zoom,
+                                                    {
+                                                        reset: true,
+                                                    }
+                                                );
+                                                map.setZoom(mapData.zoom);
+                                            }, 100);
+                                        }, 200);
+                                    }
 
-            if(jQuery(window).width() <= 768) {
-              collapsed = true;
-            }
+                                    setTimeout(function () {
+                                        if (mapData.pan_limits) {
+                                            map.setMaxBounds(
+                                                L.latLngBounds(
+                                                    [
+                                                        mapData.pan_limits
+                                                            .south,
+                                                        mapData.pan_limits.west,
+                                                    ],
+                                                    [
+                                                        mapData.pan_limits
+                                                            .north,
+                                                        mapData.pan_limits.east,
+                                                    ]
+                                                )
+                                            );
+                                        }
+                                    }, 400);
+                                }, 200);
+                            }
+                        });
 
-            var layerControl = L.control.layers({}, {}, {
-              collapsed: collapsed,
-              position: 'bottomright',
-              autoZIndex: false
-            }).addTo(map);
+                        /*
+                         * Markers
+                         */
+                        var icon = L.divIcon({
+                            className: "pin",
+                            iconSize: [18, 18],
+                            iconAnchor: [9, 18],
+                            popupAnchor: [0, -18],
+                        });
 
-            var legendControl = L.mapbox.legendControl().addTo(map);
+                        var markerLayer = L.markerClusterGroup({
+                            zIndex: 100,
+                            maxClusterRadius: 40,
+                            polygonOptions: {
+                                fillColor: "#000",
+                                color: "#000",
+                                opacity: 0.3,
+                                weight: 2,
+                            },
+                            spiderLegPolylineOptions: {
+                                weight: 1,
+                                color: "#222",
+                                opacity: 0.4,
+                            },
+                            iconCreateFunction: function (cluster) {
+                                var childCount = cluster.getChildCount();
 
-            layerControl.addOverlay(markerLayer, 'Assassinatos');
+                                var c = " marker-cluster-";
+                                if (childCount < 10) {
+                                    c += "small";
+                                } else if (childCount < 100) {
+                                    c += "medium";
+                                } else {
+                                    c += "large";
+                                }
 
-            map.on('layeradd', function(ev) {
-              if(ev.layer._vindig_id) {
-                if(layerMap[ev.layer._vindig_id].control)
-                  map.addControl(layerMap[ev.layer._vindig_id].control);
-                if(layerMap[ev.layer._vindig_id].legend) {
-                  legendControl.addLegend(layerMap[ev.layer._vindig_id].legend);
-                }
-              }
-            });
-            map.on('layerremove', function(ev) {
-              if(ev.layer._vindig_id) {
-                if(layerMap[ev.layer._vindig_id].control)
-                  map.removeControl(layerMap[ev.layer._vindig_id].control);
-                if(layerMap[ev.layer._vindig_id].legend) {
-                  legendControl.removeLegend(layerMap[ev.layer._vindig_id].legend);
-                }
-              }
-            });
+                                var icon = L.divIcon({
+                                    html:
+                                        "<div><span>" +
+                                        childCount +
+                                        "</span></div>",
+                                    className: "marker-cluster" + c,
+                                    iconSize: new L.Point(40, 40),
+                                });
 
-            scope.$watch('layers', function(layers, prevLayers) {
+                                return icon;
+                            },
+                        });
 
-              if(layers !== prevLayers || _.isEmpty(layerMap)) {
+                        markerLayer.addTo(map);
 
-                if(prevLayers && prevLayers.length) {
-                  if(fixed.length) {
-                    _.each(fixed, function(l) {
-                      map.removeLayer(l.layer);
-                    });
-                    fixed = [];
-                  }
-                  if(swapable.length) {
-                    _.each(swapable, function(l) {
-                      layerControl.removeLayer(l.layer);
-                      if(map.hasLayer(l.layer))
-                        map.removeLayer(l.layer);
-                    });
-                    swapable = [];
-                  }
-                  if(switchable.length) {
-                    _.each(switchable, function(l) {
-                      layerControl.removeLayer(l.layer);
-                      if(map.hasLayer(l.layer))
-                        map.removeLayer(l.layer);
-                    });
-                    switchable = [];
-                  }
-                }
+                        if (scope.heatMarker) {
+                            var heatLayer = L.heatLayer([], {
+                                blur: 30,
+                            });
+                            heatLayer.addTo(map);
+                        }
 
-                if(layers && layers.length) {
-                  _.each(layers, function(layer, i) {
-                    layer.zIndex = i+10;
-                    layer.ID = layer.ID || 'base';
-                    if(!layerMap[layer.ID] || layer.ID == 'base')
-                      layerMap[layer.ID] = Vindig.getLayer(layer, map);
-                    if(layer.filtering == 'fixed' || !layer.filtering) {
-                      fixed.push(layerMap[layer.ID]);
-                      map.addLayer(layerMap[layer.ID].layer);
-                    } else if(layer.filtering == 'swap') {
-                      if(layer.first_swap)
-                        map.addLayer(layerMap[layer.ID].layer);
-                      swapable.push(layerMap[layer.ID]);
-                    } else if(layer.filtering == 'switch') {
-                      if(!layer.hidden)
-                        map.addLayer(layerMap[layer.ID].layer);
-                      switchable.push(layerMap[layer.ID]);
-                    }
-                  });
+                        var markers = [];
+                        var latlngs = [];
+                        scope.$watch(
+                            "markers",
+                            _.debounce(function (posts) {
+                                for (var key in markers) {
+                                    markerLayer.removeLayer(markers[key]);
+                                }
+                                markers = [];
+                                latlngs = [];
+                                for (var key in posts) {
+                                    var post = posts[key];
+                                    latlngs.push([post.lat, post.lng]);
+                                    markers[key] = L.marker(
+                                        [post.lat, post.lng],
+                                        {
+                                            icon: icon,
+                                        }
+                                    );
+                                    markers[key].post = post;
+                                    markers[key].bindPopup(post.message);
+                                    markers[key].on("mouseover", function (ev) {
+                                        ev.target.openPopup();
+                                    });
+                                    markers[key].on("mouseout", function (ev) {
+                                        ev.target.closePopup();
+                                    });
+                                    markers[key].on("click", function (ev) {
+                                        var params = _.extend(
+                                            {
+                                                focus: false,
+                                            },
+                                            ev.target.post.state.params
+                                        );
+                                        var to = "home.case";
+                                        if (
+                                            $state.current.name.indexOf(
+                                                "dossier"
+                                            ) !== -1
+                                        )
+                                            to = "home.dossier.case";
+                                        $state.go(to, params);
+                                    });
+                                }
+                                for (var key in markers) {
+                                    markers[key].addTo(markerLayer);
+                                }
+                                if (scope.heatMarker)
+                                    heatLayer.setLatLngs(latlngs);
+                            }, 300),
+                            true
+                        );
 
-                  swapable = swapable.reverse();
-                  _.each(swapable, function(layer) {
-                    layerControl.addBaseLayer(layer.layer, layer.name);
-                  });
+                        /*
+                         * Layers
+                         */
 
-                  switchable = switchable.reverse();
-                  _.each(switchable, function(layer) {
-                    layerControl.addOverlay(layer.layer, layer.name);
-                  });
+                        scope.layers = [];
 
-                }
+                        var fixed = [];
+                        var swapable = [];
+                        var switchable = [];
 
-              }
+                        var layerMap = {};
 
-            });
+                        var collapsed = false;
 
-          }
-        }
-      }
-    ])
+                        if (jQuery(window).width() <= 768) {
+                            collapsed = true;
+                        }
 
-  };
+                        var layerControl = L.control
+                            .layers(
+                                {},
+                                {},
+                                {
+                                    collapsed: collapsed,
+                                    position: "bottomright",
+                                    autoZIndex: false,
+                                }
+                            )
+                            .addTo(map);
 
+                        var legendControl = L.mapbox.legendControl().addTo(map);
+
+                        layerControl.addOverlay(markerLayer, "Assassinatos");
+
+                        map.on("layeradd", function (ev) {
+                            if (ev.layer._vindig_id) {
+                                if (layerMap[ev.layer._vindig_id].control)
+                                    map.addControl(
+                                        layerMap[ev.layer._vindig_id].control
+                                    );
+                                if (layerMap[ev.layer._vindig_id].legend) {
+                                    legendControl.addLegend(
+                                        layerMap[ev.layer._vindig_id].legend
+                                    );
+                                }
+                            }
+                        });
+                        map.on("layerremove", function (ev) {
+                            if (ev.layer._vindig_id) {
+                                if (layerMap[ev.layer._vindig_id].control)
+                                    map.removeControl(
+                                        layerMap[ev.layer._vindig_id].control
+                                    );
+                                if (layerMap[ev.layer._vindig_id].legend) {
+                                    legendControl.removeLegend(
+                                        layerMap[ev.layer._vindig_id].legend
+                                    );
+                                }
+                            }
+                        });
+
+                        scope.$watch("layers", function (layers, prevLayers) {
+                            if (layers !== prevLayers || _.isEmpty(layerMap)) {
+                                if (prevLayers && prevLayers.length) {
+                                    if (fixed.length) {
+                                        _.each(fixed, function (l) {
+                                            map.removeLayer(l.layer);
+                                        });
+                                        fixed = [];
+                                    }
+                                    if (swapable.length) {
+                                        _.each(swapable, function (l) {
+                                            layerControl.removeLayer(l.layer);
+                                            if (map.hasLayer(l.layer))
+                                                map.removeLayer(l.layer);
+                                        });
+                                        swapable = [];
+                                    }
+                                    if (switchable.length) {
+                                        _.each(switchable, function (l) {
+                                            layerControl.removeLayer(l.layer);
+                                            if (map.hasLayer(l.layer))
+                                                map.removeLayer(l.layer);
+                                        });
+                                        switchable = [];
+                                    }
+                                }
+
+                                if (layers && layers.length) {
+                                    _.each(layers, function (layer, i) {
+                                        layer.zIndex = i + 10;
+                                        layer.ID = layer.ID || "base";
+                                        if (
+                                            !layerMap[layer.ID] ||
+                                            layer.ID == "base"
+                                        )
+                                            layerMap[
+                                                layer.ID
+                                            ] = Vindig.getLayer(layer, map);
+                                        if (
+                                            layer.filtering == "fixed" ||
+                                            !layer.filtering
+                                        ) {
+                                            fixed.push(layerMap[layer.ID]);
+                                            map.addLayer(
+                                                layerMap[layer.ID].layer
+                                            );
+                                        } else if (layer.filtering == "swap") {
+                                            if (layer.first_swap)
+                                                map.addLayer(
+                                                    layerMap[layer.ID].layer
+                                                );
+                                            swapable.push(layerMap[layer.ID]);
+                                        } else if (
+                                            layer.filtering == "switch"
+                                        ) {
+                                            if (!layer.hidden)
+                                                map.addLayer(
+                                                    layerMap[layer.ID].layer
+                                                );
+                                            switchable.push(layerMap[layer.ID]);
+                                        }
+                                    });
+
+                                    swapable = swapable.reverse();
+                                    _.each(swapable, function (layer) {
+                                        layerControl.addBaseLayer(
+                                            layer.layer,
+                                            layer.name
+                                        );
+                                    });
+
+                                    switchable = switchable.reverse();
+                                    _.each(switchable, function (layer) {
+                                        layerControl.addOverlay(
+                                            layer.layer,
+                                            layer.name
+                                        );
+                                    });
+                                }
+                            }
+                        });
+                    },
+                };
+            },
+        ]);
+    };
 })(window.vindig, window.jQuery, window.L);
 
 },{}],3:[function(require,module,exports){
