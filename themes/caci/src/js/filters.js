@@ -198,8 +198,8 @@
                                     var geolocatedData = postMeta._related_point[0];
 
                                     params = {};
-                                    params[post.type + "Id"] = post.ID;
-                                    markers[post.ID] = {
+                                    params[post.type + "Id"] = post.id;
+                                    markers[post.id] = {
                                         lat: geolocatedData._geocode_lat,
                                         lng: geolocatedData._geocode_lon,
                                         message:

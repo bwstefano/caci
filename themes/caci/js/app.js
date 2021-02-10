@@ -1010,9 +1010,77 @@
                         scope.mapData = false;
                         var mapInit = false;
                         scope.$watch("mapData", function (mapData, prev) {
-                            if (mapData.ID !== prev.ID || !mapInit) {
+
+                            if (mapData.id !== prev.id || !mapInit) {
                                 mapInit = true;
-                                scope.layers = mapData.layers;
+                                var mapMeta = mapData.meta;
+                                var bruteLayers = mapMeta.layers;
+                                var layersObjects = [];
+
+                                function fetchNextLayer(layers) {
+                                    return fetch(vindig.api + '/map-layer/' + layers[layers.length - 1].id, {
+                                            method: 'get'
+                                        })
+                                        .then(function(response) {
+                                            return response.json();
+                                        })
+                                        .then(function(json) {
+                                            layers.pop();
+                                            layersObjects.push(json);
+                                            console.log(layers);
+                                            return layers.length > 0
+                                                   ? fetchNextLayer(layers)
+                                                   : layersObjects.reverse()
+                                        })
+                                        .catch(function(err) {
+                                            console.log('error: ' + err);
+                                        });
+                                }
+                                
+
+                                fetchNextLayer(bruteLayers).then(function(layers) {
+                                    var mapLayers = layers;
+
+                                    var typeEquivalence = {
+                                        'fixed': 'fixed',
+                                        'switchable': 'switch',
+                                        'swappable': 'swap'
+
+                                    };
+
+                                    var legacyLayerStructure = layers.map(layer => {
+                                        var mapLayer = mapLayers.find(mLayer => mLayer.id === layer.id);
+
+                                        var baseObject = {
+                                            ID: layer.id,
+                                            title: layer.title.rendered,
+                                            type: layer.meta.type,
+                                            // "tile_url": "https://api.mapbox.com/styles/v1/infoamazonia/ckamz99750v0t1io6cajfmvs0/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaW5mb2FtYXpvbmlhIiwiYSI6InItajRmMGsifQ.JnRnLDiUXSEpgn7bPDzp7g",
+                                            // "utfgrid_url": "",
+                                            // "utfgrid_template": "",
+                                            // "tms": "",
+                                            filtering: typeEquivalence[mapLayer.use],
+                                            "first_swap": mapLayer.default? "on" : "off"
+                                        };
+
+                                        switch(baseObject.type) {
+                                            case 'tilelayer':
+                                                baseObject = { ...baseObject, tile_url: layer.meta.layer_type_options.url }
+                                                break;
+                                            case 'mapbox':
+                                                baseObject = { ...baseObject }
+                                                break;
+                                        }
+
+                                        return baseObject;
+                                    })
+
+                                    // scope.layers = mapData.layers;
+                                    scope.layers = legacyLayerStructure;
+                                    console.log(legacyLayerStructure);
+                                })
+
+
                                 setTimeout(function () {
                                     if (mapData.min_zoom)
                                         map.options.minZoom = parseInt(
@@ -1139,8 +1207,11 @@
                                 }
                                 markers = [];
                                 latlngs = [];
+                                console.log("POSTS", posts);
+                                
                                 for (var key in posts) {
                                     var post = posts[key];
+                                    
                                     latlngs.push([post.lat, post.lng]);
                                     markers[key] = L.marker(
                                         [post.lat, post.lng],
@@ -1532,8 +1603,8 @@
                                     var geolocatedData = postMeta._related_point[0];
 
                                     params = {};
-                                    params[post.type + "Id"] = post.ID;
-                                    markers[post.ID] = {
+                                    params[post.type + "Id"] = post.id;
+                                    markers[post.id] = {
                                         lat: geolocatedData._geocode_lat,
                                         lng: geolocatedData._geocode_lon,
                                         message:
