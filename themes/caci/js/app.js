@@ -394,7 +394,10 @@
         });
 
         $scope.focusMap = function(caso) {
-          $rootScope.$broadcast('focusMap', caso.coordinates);
+            var geolocatedData = caso.meta._related_point[0];
+            var coordinates = [geolocatedData._geocode_lon, geolocatedData._geocode_lat]
+            // console.log("coordinates", coordinates);
+          $rootScope.$broadcast('focusMap', coordinates);
         };
 
         // Case list
@@ -499,6 +502,7 @@
       'Case',
       'Vindig',
       function($rootScope, $state, $stateParams, $scope, $sce, Case, Vindig) {
+          console.log("Aqui", Case)
         $scope.caso = Case.data;
         $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
         $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
@@ -1229,15 +1233,16 @@
             "$sce",
             function ($sce) {
                 return function (input) {
+                    var data = input.meta;
                     var date = "";
-                    if (input.ano) {
-                        date = '<span class="ano">' + input.ano + "</span>";
+                    if (data.ano) {
+                        date = '<span class="ano">' + data.ano + "</span>";
                     }
-                    if (input.mes) {
-                        date += '<span class="mes">/' + input.mes + "</span>";
+                    if (data.mes) {
+                        date += '<span class="mes">/' + data.mes + "</span>";
                     }
-                    if (input.dia) {
-                        date += '<span class="dia">/' + input.dia + "</span>";
+                    if (data.dia) {
+                        date += '<span class="dia">/' + data.dia + "</span>";
                     }
                     return $sce.trustAsHtml(date);
                 };
@@ -1249,39 +1254,41 @@
             function ($sce) {
                 return function (input, showLabels) {
                     var location = "";
-                    if (input.terra_indigena) {
+                    var data = input.meta;
+
+                    if (data.terra_indigena) {
                         if (showLabels)
                             location =
                                 '<span class="ti"><span class="label">Terra indígena</span> ' +
-                                input.terra_indigena +
+                                data.terra_indigena +
                                 "</span>";
                         else
                             location =
                                 '<span class="ti">' +
-                                input.terra_indigena +
+                                data.terra_indigena +
                                 "</span>";
                     }
-                    if (input.municipio) {
+                    if (data.municipio) {
                         if (showLabels)
                             location +=
                                 '<span class="mun"><span class="label">Município</span> ' +
-                                input.municipio +
+                                data.municipio +
                                 "</span>";
                         else
                             location +=
                                 '<span class="mun">' +
-                                input.municipio +
+                                data.municipio +
                                 "</span>";
                     }
-                    if (input.uf) {
+                    if (data.uf) {
                         if (showLabels)
                             location +=
                                 '<span class="uf"><span class="label">Estado</span> ' +
-                                input.uf +
+                                data.uf +
                                 "</span>";
                         else
                             location +=
-                                '<span class="uf">' + input.uf + "</span>";
+                                '<span class="uf">' + data.uf + "</span>";
                     }
                     return $sce.trustAsHtml(location);
                 };
@@ -1320,12 +1327,16 @@
                             var markers = {};
 
                             _.each(input, function (post) {
-                                if (post.coordinates) {
+                                var postMeta = post.meta;
+
+                                if (postMeta._related_point && postMeta._related_point.length) {
+                                    var geolocatedData = postMeta._related_point[0];
+
                                     params = {};
                                     params[post.type + "Id"] = post.ID;
                                     markers[post.ID] = {
-                                        lat: post.coordinates[1],
-                                        lng: post.coordinates[0],
+                                        lat: geolocatedData._geocode_lat,
+                                        lng: geolocatedData._geocode_lon,
                                         message:
                                             "<h2>" +
                                             casoNameFilter(post) +
@@ -1443,6 +1454,7 @@ require('./util');
             '$stateParams',
             'Vindig',
             function($stateParams, Vindig) {
+                console.log("caseId", $stateParams.caseId);
               return Vindig.getPost($stateParams.caseId);
             }
           ]

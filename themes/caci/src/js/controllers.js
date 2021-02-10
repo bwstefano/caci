@@ -393,7 +393,10 @@
         });
 
         $scope.focusMap = function(caso) {
-          $rootScope.$broadcast('focusMap', caso.coordinates);
+            var geolocatedData = caso.meta._related_point[0];
+            var coordinates = [geolocatedData._geocode_lon, geolocatedData._geocode_lat]
+            // console.log("coordinates", coordinates);
+          $rootScope.$broadcast('focusMap', coordinates);
         };
 
         // Case list
@@ -498,6 +501,7 @@
       'Case',
       'Vindig',
       function($rootScope, $state, $stateParams, $scope, $sce, Case, Vindig) {
+          console.log("Aqui", Case)
         $scope.caso = Case.data;
         $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
         $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
