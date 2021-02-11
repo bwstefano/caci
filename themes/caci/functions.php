@@ -245,7 +245,7 @@ if(!function_exists('legacy_layer_data')){
                     $base_object = array_merge($base_object, [ "hidden" => !$map_layer['default'] ]);
                     break;
                 case 'swappable':
-                    $base_object = array_merge($base_object, ["first_swap" => $map_layer['default']? "on" : "off" ]);
+                    $base_object = array_merge($base_object, ["first_swap" => $map_layer['default']? "on" : false ]);
                     break;
                 case 'fixed':
                     $base_object = $base_object;
