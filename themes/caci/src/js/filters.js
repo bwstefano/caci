@@ -61,7 +61,7 @@
             return function (input, cases) {
                 if (cases && cases.length) {
                     input = _.filter(input, function (item) {
-                        return cases.indexOf(item.ID) != -1;
+                        return cases.indexOf(item.id) != -1;
                     });
                 }
                 return input;

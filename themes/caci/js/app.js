@@ -243,8 +243,14 @@
                     for (var i = 2; i <= totalPages; i++) {
                         promises.push(Vindig.cases({ page: i }));
                         promises[i - 2].then(function (res) {
-                            // console.log($scope.casos);
-                            $scope.casos = $scope.casos.concat(res.data);
+                            // This will fix sorting
+                            var reshapedCases = res.data.map( singleCase => {
+                                return {
+                                    ...singleCase,
+                                    nome: singleCase.meta.nome,
+                                }
+                            } )
+                            $scope.casos = $scope.casos.concat(reshapedCases);
                         });
                     }
                     $q.all(promises).then(function () {
@@ -331,6 +337,8 @@
                             return parseInt(item);
                         }
                     );
+
+                    // console.log("ANOS", anos);
 
                     if (anos.length) {
                         if (
@@ -1020,6 +1028,7 @@
                                 scope.layers = mapData.layers;
                                 
                                 setTimeout(function () {
+
                                     if (mapMeta.min_zoom)
                                         map.options.minZoom = parseInt(
                                             mapMeta.min_zoom
@@ -1031,10 +1040,11 @@
                                             mapMeta.max_zoom
                                         );
                                     else map.options.maxZoom = 18;
-
-                                    if (!loc.length && mapData.id !== prev.id) {
+                                    
+                                    // console.log("loc.length", loc.length);
+                                    // if (!loc.length && mapData.id !== prev.id) {
+                                    if (!loc.length) {
                                         setTimeout(function () {
-                                            console.log("aaa")
                                             map.setView(
                                                 { lat: mapMeta.center_lat, lon: mapMeta.center_lon },
                                                 mapMeta.initial_zoom,
@@ -1170,7 +1180,7 @@
                                 }
                                 markers = [];
                                 latlngs = [];
-                                console.log("POSTS", posts);
+                                // console.log("POSTS", posts);
                                 
                                 for (var key in posts) {
                                     var post = posts[key];
@@ -1430,7 +1440,7 @@
             return function (input, cases) {
                 if (cases && cases.length) {
                     input = _.filter(input, function (item) {
-                        return cases.indexOf(item.ID) != -1;
+                        return cases.indexOf(item.id) != -1;
                     });
                 }
                 return input;
@@ -1995,6 +2005,7 @@ require("./util");
                         return $http.get(vindig.api + "/map/" + id);
                     },
                     getUniq: function (list, param, uniqParam) {
+                        // console.log(param, uniqParam,list)
                         var vals = [];
                         _.each(list, function (item) {
                             if (item.meta[param]) {

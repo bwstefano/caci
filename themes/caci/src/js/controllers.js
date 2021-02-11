@@ -242,8 +242,14 @@
                     for (var i = 2; i <= totalPages; i++) {
                         promises.push(Vindig.cases({ page: i }));
                         promises[i - 2].then(function (res) {
-                            // console.log($scope.casos);
-                            $scope.casos = $scope.casos.concat(res.data);
+                            // This will fix sorting
+                            var reshapedCases = res.data.map( singleCase => {
+                                return {
+                                    ...singleCase,
+                                    nome: singleCase.meta.nome,
+                                }
+                            } )
+                            $scope.casos = $scope.casos.concat(reshapedCases);
                         });
                     }
                     $q.all(promises).then(function () {
@@ -330,6 +336,8 @@
                             return parseInt(item);
                         }
                     );
+
+                    // console.log("ANOS", anos);
 
                     if (anos.length) {
                         if (

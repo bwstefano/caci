@@ -356,6 +356,7 @@
                                 scope.layers = mapData.layers;
                                 
                                 setTimeout(function () {
+
                                     if (mapMeta.min_zoom)
                                         map.options.minZoom = parseInt(
                                             mapMeta.min_zoom
@@ -367,10 +368,11 @@
                                             mapMeta.max_zoom
                                         );
                                     else map.options.maxZoom = 18;
-
-                                    if (!loc.length && mapData.id !== prev.id) {
+                                    
+                                    // console.log("loc.length", loc.length);
+                                    // if (!loc.length && mapData.id !== prev.id) {
+                                    if (!loc.length) {
                                         setTimeout(function () {
-                                            console.log("aaa")
                                             map.setView(
                                                 { lat: mapMeta.center_lat, lon: mapMeta.center_lon },
                                                 mapMeta.initial_zoom,
@@ -506,7 +508,7 @@
                                 }
                                 markers = [];
                                 latlngs = [];
-                                console.log("POSTS", posts);
+                                // console.log("POSTS", posts);
                                 
                                 for (var key in posts) {
                                     var post = posts[key];

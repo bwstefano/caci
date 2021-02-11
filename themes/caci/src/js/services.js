@@ -169,6 +169,7 @@
                         return $http.get(vindig.api + "/map/" + id);
                     },
                     getUniq: function (list, param, uniqParam) {
+                        // console.log(param, uniqParam,list)
                         var vals = [];
                         _.each(list, function (item) {
                             if (item.meta[param]) {
