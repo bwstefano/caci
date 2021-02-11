@@ -165,6 +165,9 @@
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
                     },
+                    getCase: function (id) {
+                        return $http.get(vindig.api + "/case/" + id);
+                    },
                     getMap: function (id) {
                         return $http.get(vindig.api + "/map/" + id);
                     },

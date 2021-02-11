@@ -99,8 +99,8 @@ require("./util");
                             "$stateParams",
                             "Vindig",
                             function ($stateParams, Vindig) {
-                                console.log("caseId", $stateParams.caseId);
-                                return Vindig.getPost($stateParams.caseId);
+                                // console.log("caseId", $stateParams.caseId);
+                                return Vindig.getCase($stateParams.caseId);
                             },
                         ],
                     },

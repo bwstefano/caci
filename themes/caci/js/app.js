@@ -247,9 +247,10 @@
                             var reshapedCases = res.data.map( singleCase => {
                                 return {
                                     ...singleCase,
-                                    nome: singleCase.meta.nome,
+                                    ...singleCase.meta,
                                 }
                             } )
+                            // console.log(reshapedCases);
                             $scope.casos = $scope.casos.concat(reshapedCases);
                         });
                     }
@@ -294,11 +295,11 @@
                 $rootScope.$on("nextCase", function (ev, caso) {
                     var i;
                     _.each($scope.filtered, function (c, index) {
-                        if (c.ID == caso.ID) i = index;
+                        if (c.id == caso.id) i = index;
                     });
                     if (i >= 0 && $scope.filtered[i + 1]) {
                         $state.go("home.case", {
-                            caseId: $scope.filtered[i + 1].ID,
+                            caseId: $scope.filtered[i + 1].id,
                         });
                     }
                 });
@@ -306,11 +307,11 @@
                 $rootScope.$on("prevCase", function (ev, caso) {
                     var i;
                     _.each($scope.filtered, function (c, index) {
-                        if (c.ID == caso.ID) i = index;
+                        if (c.id == caso.id) i = index;
                     });
                     if (i >= 0 && $scope.filtered[i - 1]) {
                         $state.go("home.case", {
-                            caseId: $scope.filtered[i - 1].ID,
+                            caseId: $scope.filtered[i - 1].id,
                         });
                     }
                 });
@@ -530,7 +531,7 @@
             ) {
                 $scope.url = $state.href(
                     "home.dossier",
-                    { id: Dossier.data.ID },
+                    { id: Dossier.data.id },
                     {
                         absolute: true,
                     }
@@ -603,7 +604,15 @@
                 Case,
                 Vindig
             ) {
-                console.log("Aqui", Case);
+                Case.data = {
+                    ...Case.data,
+                    ...Case.data.meta,
+                    coordinates: [
+                        Case.data.meta._related_point[0]._geocode_lon,
+                        Case.data.meta._related_point[0]._geocode_lat,
+                    ]
+                }
+
                 $scope.caso = Case.data;
                 $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
                 $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
@@ -613,7 +622,7 @@
                 $rootScope.$broadcast("invalidateMap");
 
                 $scope.report = function (message) {
-                    Vindig.report($scope.caso.ID, message)
+                    Vindig.report($scope.caso.id, message)
                         .success(function (data) {
                             $scope.reported = true;
                         })
@@ -1709,8 +1718,8 @@ require("./util");
                             "$stateParams",
                             "Vindig",
                             function ($stateParams, Vindig) {
-                                console.log("caseId", $stateParams.caseId);
-                                return Vindig.getPost($stateParams.caseId);
+                                // console.log("caseId", $stateParams.caseId);
+                                return Vindig.getCase($stateParams.caseId);
                             },
                         ],
                     },
@@ -2000,6 +2009,9 @@ require("./util");
                     },
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
+                    },
+                    getCase: function (id) {
+                        return $http.get(vindig.api + "/case/" + id);
                     },
                     getMap: function (id) {
                         return $http.get(vindig.api + "/map/" + id);
