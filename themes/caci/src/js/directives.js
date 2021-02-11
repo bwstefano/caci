@@ -353,102 +353,41 @@
                                 var bruteLayers = mapMeta.layers;
                                 var layersObjects = [];
 
-                                function fetchNextLayer(layers) {
-                                    return fetch(vindig.api + '/map-layer/' + layers[layers.length - 1].id, {
-                                            method: 'get'
-                                        })
-                                        .then(function(response) {
-                                            return response.json();
-                                        })
-                                        .then(function(json) {
-                                            layers.pop();
-                                            layersObjects.push(json);
-                                            console.log(layers);
-                                            return layers.length > 0
-                                                   ? fetchNextLayer(layers)
-                                                   : layersObjects.reverse()
-                                        })
-                                        .catch(function(err) {
-                                            console.log('error: ' + err);
-                                        });
-                                }
+                                scope.layers = mapData.layers;
                                 
-
-                                fetchNextLayer(bruteLayers).then(function(layers) {
-                                    var mapLayers = layers;
-
-                                    var typeEquivalence = {
-                                        'fixed': 'fixed',
-                                        'switchable': 'switch',
-                                        'swappable': 'swap'
-
-                                    };
-
-                                    var legacyLayerStructure = layers.map(layer => {
-                                        var mapLayer = mapLayers.find(mLayer => mLayer.id === layer.id);
-
-                                        var baseObject = {
-                                            ID: layer.id,
-                                            title: layer.title.rendered,
-                                            type: layer.meta.type,
-                                            // "tile_url": "https://api.mapbox.com/styles/v1/infoamazonia/ckamz99750v0t1io6cajfmvs0/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaW5mb2FtYXpvbmlhIiwiYSI6InItajRmMGsifQ.JnRnLDiUXSEpgn7bPDzp7g",
-                                            // "utfgrid_url": "",
-                                            // "utfgrid_template": "",
-                                            // "tms": "",
-                                            filtering: typeEquivalence[mapLayer.use],
-                                            "first_swap": mapLayer.default? "on" : "off"
-                                        };
-
-                                        switch(baseObject.type) {
-                                            case 'tilelayer':
-                                                baseObject = { ...baseObject, tile_url: layer.meta.layer_type_options.url }
-                                                break;
-                                            case 'mapbox':
-                                                baseObject = { ...baseObject }
-                                                break;
-                                        }
-
-                                        return baseObject;
-                                    })
-
-                                    // scope.layers = mapData.layers;
-                                    scope.layers = legacyLayerStructure;
-                                    console.log(legacyLayerStructure);
-                                })
-
-
                                 setTimeout(function () {
-                                    if (mapData.min_zoom)
+                                    if (mapMeta.min_zoom)
                                         map.options.minZoom = parseInt(
-                                            mapData.min_zoom
+                                            mapMeta.min_zoom
                                         );
                                     else map.options.minZoom = 1;
 
-                                    if (mapData.max_zoom)
+                                    if (mapMeta.max_zoom)
                                         map.options.maxZoom = parseInt(
-                                            mapData.max_zoom
+                                            mapMeta.max_zoom
                                         );
                                     else map.options.maxZoom = 18;
 
-                                    if (!loc.length && mapData.ID !== prev.ID) {
+                                    if (!loc.length && mapData.id !== prev.id) {
                                         setTimeout(function () {
+                                            console.log("aaa")
                                             map.setView(
-                                                mapData.center,
-                                                mapData.zoom,
+                                                { lat: mapMeta.center_lat, lon: mapMeta.center_lon },
+                                                mapMeta.initial_zoom,
                                                 {
                                                     reset: true,
                                                 }
                                             );
-                                            map.setZoom(mapData.zoom);
+                                            map.setZoom(mapMeta.initial_zoom);
                                             setTimeout(function () {
                                                 map.setView(
-                                                    mapData.center,
-                                                    mapData.zoom,
+                                                    { lat: mapMeta.center_lat, lon: mapMeta.center_lon },
+                                                    mapMeta.initial_zoom ,
                                                     {
                                                         reset: true,
                                                     }
                                                 );
-                                                map.setZoom(mapData.zoom);
+                                                map.setZoom(mapMeta.initial_zoom);
                                             }, 100);
                                         }, 200);
                                     }
@@ -469,6 +408,30 @@
                                                     ]
                                                 )
                                             );
+                                        } else {
+                                            var pan_limits = {
+                                                "east": "0.87890625",
+                                                "north": "29.38217507514529",
+                                                "south": "-49.49667452747043",
+                                                "west": "-128.671875"
+                                            }
+
+                                            map.setMaxBounds(
+                                                L.latLngBounds(
+                                                    [
+                                                        pan_limits
+                                                            .south,
+                                                        pan_limits.west,
+                                                    ],
+                                                    [
+                                                        pan_limits
+                                                            .north,
+                                                        pan_limits.east,
+                                                    ]
+                                                )
+                                            );
+
+
                                         }
                                     }, 400);
                                 }, 200);
@@ -652,6 +615,7 @@
 
                         scope.$watch("layers", function (layers, prevLayers) {
                             if (layers !== prevLayers || _.isEmpty(layerMap)) {
+                                
                                 if (prevLayers && prevLayers.length) {
                                     if (fixed.length) {
                                         _.each(fixed, function (l) {

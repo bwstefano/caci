@@ -204,3 +204,63 @@ if(!get_option('migrated-geolocation-meta')){
 		update_post_meta( get_the_ID(), '_related_point', $related_point );
 	}
 }
+
+
+if(!function_exists('legacy_layer_data')){
+    function legacy_layer_data($response, $post) {
+        $response->data['layers'] = '';
+        $layers = get_post_meta( $post->ID, 'layers', true );
+
+        $type_equivalence = [
+                    'fixed'=> 'fixed',
+                    'switchable' => 'switch',
+                    'swappable' => 'swap'
+        ];
+
+        $legacy_layers = [];
+
+        foreach($layers as $map_layer) {
+            $base_object = [
+                "ID" => $map_layer["id"],
+                "title" => get_the_title($map_layer["id"]),
+                "type" => get_post_meta($map_layer["id"], "type", true),
+                "filtering" => $type_equivalence[$map_layer["use"]],
+            ];
+
+            switch($base_object["type"]) {
+                case 'tilelayer':
+                    $base_object = array_merge($base_object, [ 'tile_url' => get_post_meta($map_layer["id"], "layer_type_options", true)["url"] ]);
+                    // $baseObject = [ ...$baseObject, 'tile_url' => layer.meta.layer_type_options.url ];
+                    break;
+                case 'mapbox':
+                    $base_object = $base_object;
+                    break;
+            }
+
+            // return $map_layer;
+
+    
+            switch($map_layer['use']) {
+                case 'switchable':
+                    $base_object = array_merge($base_object, [ "hidden" => !$map_layer['default'] ]);
+                    break;
+                case 'swappable':
+                    $base_object = array_merge($base_object, ["first_swap" => $map_layer['default']? "on" : "off" ]);
+                    break;
+                case 'fixed':
+                    $base_object = $base_object;
+                    break;
+            }
+
+            $legacy_layers[] = $base_object;
+            // return ;
+        }
+        
+
+        
+        $response->data['layers'] = $legacy_layers;
+        return $response;
+    }
+}
+
+add_filter('rest_prepare_map', 'legacy_layer_data', 10, 3);
