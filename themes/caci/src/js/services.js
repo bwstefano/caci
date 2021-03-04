@@ -68,9 +68,9 @@
                     cases: function (params, filter) {
                         params = params || {};
                         params = _.extend(
-                            {
-                                type: "case",
-                            },
+                            // {
+                            //     type: "case",
+                            // },
                             params
                         );
 
@@ -110,9 +110,9 @@
                     dossiers: function (params, filter) {
                         params = params || {};
                         params = _.extend(
-                            {
-                                type: "dossier",
-                            },
+                            // {
+                            //     type: "dossier",
+                            // },
                             params
                         );
 
@@ -129,7 +129,7 @@
 
                         return $http({
                             method: "GET",
-                            url: vindig.api + "/posts",
+                            url: vindig.api + "/dossier",
                             params: params,
                         });
                     },
@@ -164,6 +164,9 @@
                     },
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
+                    },
+                    getDossier: function (id) {
+                        return $http.get(vindig.api + "/dossier/" + id);
                     },
                     getCase: function (id) {
                         return $http.get(vindig.api + "/case/" + id);

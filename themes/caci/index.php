@@ -65,9 +65,9 @@
           <li id="dossies" ng-class="{active: showDossiers && !showNav}">
             <ul class="dossie-list clearfix">
               <li ng-repeat="dossier in dossiers">
-                <div style="background-image:url({{dossier.featured_image.attachment_meta.sizes.large.url}});" class="image"></div>
+                <!-- <div style="background-image:url({{dossier.featured_image.attachment_meta.sizes.large.url}});" class="image"></div> -->
                 <article>
-                  <h3><a ui-sref="home.dossier({dossierId: dossier.ID})">{{dossier.title}}</a></h3>
+                  <h3><a ui-sref="home.dossier({dossierId: dossier.id})">{{dossier.title.rendered}}</a></h3>
                 </article>
               </li>
             </ul>

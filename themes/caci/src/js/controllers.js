@@ -528,6 +528,8 @@
                 Map,
                 $state
             ) {
+                console.log("Dossier.data", Dossier.data);
+
                 $scope.url = $state.href(
                     "home.dossier",
                     { id: Dossier.data.id },
@@ -538,17 +540,25 @@
 
                 $scope.dossier = Dossier.data;
                 $scope.dossier.content = $sce.trustAsHtml(
-                    $scope.dossier.content
+                    $scope.dossier.content.rendered
+                );
+
+                $scope.dossier.title = $sce.trustAsHtml(
+                    $scope.dossier.title.rendered
+                );
+
+                $scope.dossier.excerpt = $sce.trustAsHtml(
+                    $scope.dossier.excerpt.rendered
                 );
                 $scope.$emit("dossierMap", Map);
                 $timeout(function () {
                     $rootScope.$broadcast("invalidateMap");
                 }, 300);
 
-                if ($scope.dossier.casos && $scope.dossier.casos.length) {
-                    $rootScope.$broadcast("dossierCases", $scope.dossier.casos);
-                } else if ($scope.dossier.casos_query) {
-                    var preQuery = $scope.dossier.casos_query.split(";");
+                if ($scope.dossier.meta.casos && $scope.dossier.meta.casos.length) {
+                    $rootScope.$broadcast("dossierCases", $scope.dossier.meta.casos);
+                } else if ($scope.dossier.meta.casos_query) {
+                    var preQuery = $scope.dossier.meta.casos_query.split(";");
                     var casosQuery = {};
                     _.each(preQuery, function (prop) {
                         if (prop) {
@@ -572,7 +582,7 @@
 
                 $scope.whatsapp =
                     "whatsapp://send?text=" +
-                    encodeURIComponent($scope.dossier.title + " " + $scope.url);
+                    encodeURIComponent($scope.dossier.title.rendered + " " + $scope.url);
                 $scope.base = vindig.base;
 
                 $scope.hiddenContent = false;

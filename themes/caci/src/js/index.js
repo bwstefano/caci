@@ -115,7 +115,7 @@ require("./util");
                             "$stateParams",
                             "Vindig",
                             function ($stateParams, Vindig) {
-                                return Vindig.getPost($stateParams.dossierId);
+                                return Vindig.getDossier($stateParams.dossierId);
                             },
                         ],
                         DossierMap: [
@@ -123,8 +123,8 @@ require("./util");
                             "Dossier",
                             "Vindig",
                             function ($q, Dossier, Vindig) {
-                                var mapId = Dossier.data.maps.length
-                                    ? Dossier.data.maps[0]
+                                var mapId = Dossier.data.meta.maps.length
+                                    ? Dossier.data.meta.maps[0]
                                     : vindig.featured_map;
                                 var deferred = $q.defer();
                                 Vindig.getMap(mapId).then(function (data) {

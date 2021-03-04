@@ -529,6 +529,8 @@
                 Map,
                 $state
             ) {
+                console.log("Dossier.data", Dossier.data);
+
                 $scope.url = $state.href(
                     "home.dossier",
                     { id: Dossier.data.id },
@@ -539,17 +541,25 @@
 
                 $scope.dossier = Dossier.data;
                 $scope.dossier.content = $sce.trustAsHtml(
-                    $scope.dossier.content
+                    $scope.dossier.content.rendered
+                );
+
+                $scope.dossier.title = $sce.trustAsHtml(
+                    $scope.dossier.title.rendered
+                );
+
+                $scope.dossier.excerpt = $sce.trustAsHtml(
+                    $scope.dossier.excerpt.rendered
                 );
                 $scope.$emit("dossierMap", Map);
                 $timeout(function () {
                     $rootScope.$broadcast("invalidateMap");
                 }, 300);
 
-                if ($scope.dossier.casos && $scope.dossier.casos.length) {
-                    $rootScope.$broadcast("dossierCases", $scope.dossier.casos);
-                } else if ($scope.dossier.casos_query) {
-                    var preQuery = $scope.dossier.casos_query.split(";");
+                if ($scope.dossier.meta.casos && $scope.dossier.meta.casos.length) {
+                    $rootScope.$broadcast("dossierCases", $scope.dossier.meta.casos);
+                } else if ($scope.dossier.meta.casos_query) {
+                    var preQuery = $scope.dossier.meta.casos_query.split(";");
                     var casosQuery = {};
                     _.each(preQuery, function (prop) {
                         if (prop) {
@@ -573,7 +583,7 @@
 
                 $scope.whatsapp =
                     "whatsapp://send?text=" +
-                    encodeURIComponent($scope.dossier.title + " " + $scope.url);
+                    encodeURIComponent($scope.dossier.title.rendered + " " + $scope.url);
                 $scope.base = vindig.base;
 
                 $scope.hiddenContent = false;
@@ -1734,7 +1744,7 @@ require("./util");
                             "$stateParams",
                             "Vindig",
                             function ($stateParams, Vindig) {
-                                return Vindig.getPost($stateParams.dossierId);
+                                return Vindig.getDossier($stateParams.dossierId);
                             },
                         ],
                         DossierMap: [
@@ -1742,8 +1752,8 @@ require("./util");
                             "Dossier",
                             "Vindig",
                             function ($q, Dossier, Vindig) {
-                                var mapId = Dossier.data.maps.length
-                                    ? Dossier.data.maps[0]
+                                var mapId = Dossier.data.meta.maps.length
+                                    ? Dossier.data.meta.maps[0]
                                     : vindig.featured_map;
                                 var deferred = $q.defer();
                                 Vindig.getMap(mapId).then(function (data) {
@@ -1913,9 +1923,9 @@ require("./util");
                     cases: function (params, filter) {
                         params = params || {};
                         params = _.extend(
-                            {
-                                type: "case",
-                            },
+                            // {
+                            //     type: "case",
+                            // },
                             params
                         );
 
@@ -1955,9 +1965,9 @@ require("./util");
                     dossiers: function (params, filter) {
                         params = params || {};
                         params = _.extend(
-                            {
-                                type: "dossier",
-                            },
+                            // {
+                            //     type: "dossier",
+                            // },
                             params
                         );
 
@@ -1974,7 +1984,7 @@ require("./util");
 
                         return $http({
                             method: "GET",
-                            url: vindig.api + "/posts",
+                            url: vindig.api + "/dossier",
                             params: params,
                         });
                     },
@@ -2009,6 +2019,9 @@ require("./util");
                     },
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
+                    },
+                    getDossier: function (id) {
+                        return $http.get(vindig.api + "/dossier/" + id);
                     },
                     getCase: function (id) {
                         return $http.get(vindig.api + "/case/" + id);
