@@ -556,7 +556,7 @@
                     $rootScope.$broadcast("invalidateMap");
                 }, 300);
 
-                if ($scope.dossier.meta.casos && $scope.dossier.meta.casos.length) {
+                if ($scope.dossier.meta.casos && $scope.dossier.meta.casos.length && $scope.dossier.meta.casos[0] != "") {
                     $rootScope.$broadcast("dossierCases", $scope.dossier.meta.casos);
                 } else if ($scope.dossier.meta.casos_query) {
                     var preQuery = $scope.dossier.meta.casos_query.split(";");
