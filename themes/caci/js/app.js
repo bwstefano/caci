@@ -429,11 +429,19 @@
                 $scope.downloadCasos = function (casos) {
                     var toCsv = [];
                     _.each(casos, function (caso) {
+                        console.log(caso);
                         var c = {};
                         _.each(csvKeys, function (k) {
-                            c[k] = caso[k];
+                            
+                            if(k == "coordinates" && caso._related_point && caso._related_point.length) 
+                                caso.meta[k] = JSON.stringify([ caso['_related_point'][0]._geocode_lat, caso['_related_point'][0]._geocode_lon ]);
+                            else if (k == "coordinates" && !caso._related_point)
+                                caso.meta[k] = ""
+
+                            c[k] = caso.meta[k];
                             if (typeof c[k] == "string")
                                 c[k] = c[k].replace(/"/g, '""');
+
                         });
                         toCsv.push(c);
                     });
