@@ -556,6 +556,10 @@
                     $scope.dossier.title.rendered
                 );
 
+                if($scope.dossier._embedded.author && $scope.dossier._embedded.author.length) {
+                    $scope.dossier.author = $scope.dossier._embedded.author[0]
+                }
+
                 $scope.dossier.excerpt = $sce.trustAsHtml(
                     $scope.dossier.excerpt.rendered
                 );
@@ -2028,8 +2032,14 @@ require("./util");
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
                     },
-                    getDossier: function (id) {
-                        return $http.get(vindig.api + "/dossier/" + id);
+                    getDossier: function (id) {                        
+                        return $http({
+                            method: "GET",
+                            url: vindig.api + `/dossier/${id}`,
+                            params: {
+                                _embed: true,
+                            },
+                        });
                     },
                     getCase: function (id) {
                         return $http.get(vindig.api + "/case/" + id);

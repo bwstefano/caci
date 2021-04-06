@@ -555,6 +555,10 @@
                     $scope.dossier.title.rendered
                 );
 
+                if($scope.dossier._embedded.author && $scope.dossier._embedded.author.length) {
+                    $scope.dossier.author = $scope.dossier._embedded.author[0]
+                }
+
                 $scope.dossier.excerpt = $sce.trustAsHtml(
                     $scope.dossier.excerpt.rendered
                 );

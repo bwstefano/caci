@@ -219,49 +219,51 @@ if(!function_exists('legacy_layer_data')){
 
         $legacy_layers = [];
 
-        foreach($layers as $index => $map_layer) {
-            $base_object = [
-                "ID" => $map_layer["id"],
-                "title" => get_the_title($map_layer["id"]),
-                "type" => get_post_meta($map_layer["id"], "type", true),
-                "filtering" => $type_equivalence[$map_layer["use"]],
-            ];
+        if($layers && sizeof($layers)) {
+            foreach($layers as $index => $map_layer) {
+                $base_object = [
+                    "ID" => $map_layer["id"],
+                    "title" => get_the_title($map_layer["id"]),
+                    "type" => get_post_meta($map_layer["id"], "type", true),
+                    "filtering" => $type_equivalence[$map_layer["use"]],
+                ];
 
-            if(!in_array($base_object["type"], ['mapbox-tileset-raster', 'tilelayer'])) continue;
-            
-            switch($base_object["type"]) {
-                case 'tilelayer':
-                    $base_object = array_merge($base_object, [ 'tile_url' => get_post_meta($map_layer["id"], "layer_type_options", true)["url"] ]);
-                    // $baseObject = [ ...$baseObject, 'tile_url' => layer.meta.layer_type_options.url ];
-                    break;
-                case 'mapbox-tileset-raster':
-                    $base_object = array_merge($base_object, [ 'type' => 'mapbox', 'mapbox_id' => get_post_meta($map_layer["id"], "layer_type_options", true)["tileset_id"]] );;
-                    break;
+                if(!in_array($base_object["type"], ['mapbox-tileset-raster', 'tilelayer'])) continue;
+                
+                switch($base_object["type"]) {
+                    case 'tilelayer':
+                        $base_object = array_merge($base_object, [ 'tile_url' => get_post_meta($map_layer["id"], "layer_type_options", true)["url"] ]);
+                        // $baseObject = [ ...$baseObject, 'tile_url' => layer.meta.layer_type_options.url ];
+                        break;
+                    case 'mapbox-tileset-raster':
+                        $base_object = array_merge($base_object, [ 'type' => 'mapbox', 'mapbox_id' => get_post_meta($map_layer["id"], "layer_type_options", true)["tileset_id"]] );;
+                        break;
+                }
+
+                // return $map_layer;
+
+        
+                switch($map_layer['use']) {
+                    case 'switchable':
+                        $base_object = array_merge($base_object, [ "hidden" => !$map_layer['default'] ]);
+                        break;
+                    case 'swappable':
+                        $base_object = array_merge($base_object, ["first_swap" => $map_layer['default']? "on" : false ]);
+                        break;
+                    case 'fixed':
+                        $base_object = $base_object;
+                        break;
+                }
+
+                
+                $legacy_layers[] = $base_object;            
+                // return ;
             }
-
-            // return $map_layer;
-
-    
-            switch($map_layer['use']) {
-                case 'switchable':
-                    $base_object = array_merge($base_object, [ "hidden" => !$map_layer['default'] ]);
-                    break;
-                case 'swappable':
-                    $base_object = array_merge($base_object, ["first_swap" => $map_layer['default']? "on" : false ]);
-                    break;
-                case 'fixed':
-                    $base_object = $base_object;
-                    break;
-            }
-
             
-            $legacy_layers[] = $base_object;            
-            // return ;
+            $response->data['layers'] = $legacy_layers;
+
         }
         
-
-        
-        $response->data['layers'] = $legacy_layers;
         return $response;
     }
 }

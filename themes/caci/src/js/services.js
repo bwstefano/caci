@@ -165,8 +165,14 @@
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
                     },
-                    getDossier: function (id) {
-                        return $http.get(vindig.api + "/dossier/" + id);
+                    getDossier: function (id) {                        
+                        return $http({
+                            method: "GET",
+                            url: vindig.api + `/dossier/${id}`,
+                            params: {
+                                _embed: true,
+                            },
+                        });
                     },
                     getCase: function (id) {
                         return $http.get(vindig.api + "/case/" + id);
