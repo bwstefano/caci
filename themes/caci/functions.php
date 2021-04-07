@@ -116,7 +116,7 @@ function vindig_scripts() {
         'api' => esc_url(get_rest_url(null, '/wp/v2')),
         // 'api' => esc_url(get_json_url()),
         
-        'featured_map' => 2307
+        'featured_map' => (int) pods_field_display('configuracoes_tema', null, 'mapa_em_destaque')
     ));
 }
 add_action('wp_enqueue_scripts', 'vindig_scripts');
@@ -269,3 +269,12 @@ if(!function_exists('legacy_layer_data')){
 }
 
 add_filter('rest_prepare_map', 'legacy_layer_data', 10, 3);
+
+function add_case_post_type($default) {
+    return array_merge($default, [ 'case' ]);
+}
+
+add_filter('jeo_enabled_post_types', 'add_case_post_type', 10, 1);
+
+//var_dump(pods_field_display('configuracoes_tema', null, 'mapa_em_destaque'));
+// die();

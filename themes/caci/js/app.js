@@ -636,7 +636,7 @@
                 }
 
                 $scope.caso = Case.data;
-                $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
+                $scope.caso.content = $sce.trustAsHtml($scope.caso.content.rendered);
                 $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
                 if ($stateParams.focus != false) {
                     $rootScope.$broadcast("focusMap", $scope.caso.coordinates);
