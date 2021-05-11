@@ -86,10 +86,18 @@
                     }
                 );
 
-                $rootScope.$on("$stateChangeSuccess", function () {
+                $rootScope.$on("mapUpdated", function (ev, map) {
+                    var center = map.getCenter();
+                    var zoom = map.getZoom();
+                    var loc = [];
+                    loc.push(center.lat);
+                    loc.push(center.lng);
+                    loc.push(zoom);
+                    loc = loc.join(",")
+
                     $scope.embedUrl = $state.href(
                         $state.current.name || "home",
-                        $state.params,
+                        { ...$state.params, loc},
                         { absolute: true }
                     );
                 });
@@ -636,7 +644,7 @@
                 }
 
                 $scope.caso = Case.data;
-                $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
+                $scope.caso.content = $sce.trustAsHtml($scope.caso.content.rendered);
                 $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
                 if ($stateParams.focus != false) {
                     $rootScope.$broadcast("focusMap", $scope.caso.coordinates);
@@ -1007,6 +1015,7 @@
                         map.on(
                             "move",
                             _.debounce(function () {
+                                scope.$emit("mapUpdated", map);
                                 scope.$apply(function () {
                                     if (doMove) {
                                         var locStr = getLocStr();

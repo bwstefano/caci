@@ -304,6 +304,7 @@
                         map.on(
                             "move",
                             _.debounce(function () {
+                                scope.$emit("mapUpdated", map);
                                 scope.$apply(function () {
                                     if (doMove) {
                                         var locStr = getLocStr();
