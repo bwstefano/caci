@@ -439,7 +439,7 @@
 
                             c[k] = caso.meta[k];
                             if (typeof c[k] == "string")
-                                c[k] = c[k].replace(/"/g, '""');
+                                c[k] = c[k].replace(/"/g, '""').replace(/(<([^>]+)>)/gi, "");
 
                         });
                         toCsv.push(c);

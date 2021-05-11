@@ -440,7 +440,7 @@
 
                             c[k] = caso.meta[k];
                             if (typeof c[k] == "string")
-                                c[k] = c[k].replace(/"/g, '""');
+                                c[k] = c[k].replace(/"/g, '""').replace(/(<([^>]+)>)/gi, "");
 
                         });
                         toCsv.push(c);
@@ -636,7 +636,7 @@
                 }
 
                 $scope.caso = Case.data;
-                $scope.caso.content = $sce.trustAsHtml($scope.caso.content.rendered);
+                $scope.caso.content = $sce.trustAsHtml($scope.caso.content);
                 $scope.caso.descricao = $sce.trustAsHtml($scope.caso.descricao);
                 if ($stateParams.focus != false) {
                     $rootScope.$broadcast("focusMap", $scope.caso.coordinates);
