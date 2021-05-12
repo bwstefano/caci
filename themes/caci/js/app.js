@@ -95,12 +95,38 @@
                     loc.push(zoom);
                     loc = loc.join(",")
 
+                    const filters = $scope.filter;
+                    const uf = filters.strict.uf;
+                    const povo = filters.strict.povo;
+                    const text = filters.text;
+                    const date_min = filters.date.min;
+                    const date_max = filters.date.max;
+                    // console.log({ ...$state.params, loc, uf, povo, text, date_min, date_max })
+
                     $scope.embedUrl = $state.href(
                         $state.current.name || "home",
-                        { ...$state.params, loc},
+                        { ...$state.params, loc, uf, povo, text, date_min, date_max },
                         { absolute: true }
                     );
                 });
+
+                $rootScope.$on("updatedFilters", function (ev, map) {
+                    const filters = $scope.filter;
+                    const uf = filters.strict.uf;
+                    const povo = filters.strict.povo;
+                    const text = filters.text;
+                    const date_min = filters.date.min;
+                    const date_max = filters.date.max;
+                    // console.log({ ...$state.params, uf, povo, text, date_min, date_max })
+
+                    $scope.embedUrl = $state.href(
+                        $state.current.name || "home",
+                        { ...$state.params, uf, povo, text, date_min, date_max },
+                        { absolute: true }
+                    );
+                })
+
+                
 
                 $scope.getEmbedUrl = function () {
                     return encodeURIComponent($scope.embedUrl);
@@ -264,6 +290,7 @@
                     }
                     $q.all(promises).then(function () {
                         $scope.loading = false;
+                        $rootScope.$broadcast("doneLoading", $scope);
                     });
                 });
 
@@ -405,11 +432,32 @@
                     true
                 );
 
+                // $rootScope.$on("updatedFilters", function (ev, filters) {
+                //     console.log("AAAAAAAAAAAA", filters, $state.current.name);
+                //     if($state.current.name.length) {
+                //         const uf = filters.strict.uf;
+                //         const povo = filters.strict.povo;
+                //         const text = filters.text;
+                //         const date_min = filters.date.min;
+                //         const date_max = filters.date.max;
+
+                //         $state.go(
+                //             $state.current.name,
+                //             { uf, povo, text, date_min, date_max },
+                //             {
+                //                 notify: false,
+                //                 location: "replace",
+                //             }
+                //         );
+                //     }
+                // });
+
                 $scope.$watch(
                     filterString,
                     function (casos) {
                         $scope.filtered = casos;
                         setFilters(casos);
+                        $rootScope.$broadcast("updatedFilters", $scope.filter);
                     },
                     true
                 );
@@ -437,7 +485,7 @@
                 $scope.downloadCasos = function (casos) {
                     var toCsv = [];
                     _.each(casos, function (caso) {
-                        console.log(caso);
+                        //console.log(caso);
                         var c = {};
                         _.each(csvKeys, function (k) {
                             
@@ -545,7 +593,7 @@
                 Map,
                 $state
             ) {
-                console.log("Dossier.data", Dossier.data);
+                // console.log("Dossier.data", Dossier.data);
 
                 $scope.url = $state.href(
                     "home.dossier",
@@ -980,6 +1028,27 @@
                             else return [];
                         }
 
+                        function getFiltersParams() {
+                            const result = {};
+                            
+                            if ($state.params.uf) 
+                                result['uf'] = $state.params.uf;
+
+                            if ($state.params.povo) 
+                                result['povo'] = $state.params.povo;
+
+                            if ($state.params.text) 
+                                result['text'] = $state.params.text;
+
+                            if ($state.params.date_min) 
+                                result['date_min'] = $state.params.date_min;
+
+                            if ($state.params.date_max) 
+                                result['date_max'] = $state.params.date_max;
+                            
+                            return result;
+                        }
+
                         angular
                             .element(element)
                             .append('<div id="' + attrs.id + '"></div>')
@@ -994,6 +1063,34 @@
                             center = [loc[0], loc[1]];
                             zoom = loc[2];
                         }
+
+                        $rootScope.$on(
+                            "doneLoading",
+                            function (ev, $scope) {
+                                const params = getFiltersParams();
+                                console.log("params", params )
+                                console.log();
+
+                                const filters = $scope.filter
+
+                                if (params['uf']) 
+                                    filters.strict.uf = params['uf'];
+
+
+                                if (params['povo']) 
+                                    filters.strict.povo = params['povo'];
+
+
+                                if (params['text']) 
+                                    filters.text = params['text'];
+
+                                if (params['date_min'] || params['date_max']) 
+                                    filters.date = { min: parseInt(params['date_min']), max: parseInt(params['date_max']) };
+
+                                $rootScope.$broadcast("updatedFilters", filters);
+                            },
+                            true
+                        );
 
                         var map = L.map(attrs.id, {
                             fullscreenControl: true,
@@ -1081,7 +1178,6 @@
                                         );
                                     else map.options.maxZoom = 18;
                                     
-                                    // console.log("loc.length", loc.length);
                                     // if (!loc.length && mapData.id !== prev.id) {
                                     if (!loc.length) {
                                         setTimeout(function () {
@@ -1689,7 +1785,7 @@ require("./util");
 
             $stateProvider
                 .state("home", {
-                    url: "/?loc&init",
+                    url: "/?loc&init&uf&text&date_min&date_max&povo",
                     controller: "HomeCtrl",
                     templateUrl: vindig.base + "/views/index.html",
                     reloadOnSearch: false,

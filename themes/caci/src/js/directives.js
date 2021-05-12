@@ -269,6 +269,27 @@
                             else return [];
                         }
 
+                        function getFiltersParams() {
+                            const result = {};
+                            
+                            if ($state.params.uf) 
+                                result['uf'] = $state.params.uf;
+
+                            if ($state.params.povo) 
+                                result['povo'] = $state.params.povo;
+
+                            if ($state.params.text) 
+                                result['text'] = $state.params.text;
+
+                            if ($state.params.date_min) 
+                                result['date_min'] = $state.params.date_min;
+
+                            if ($state.params.date_max) 
+                                result['date_max'] = $state.params.date_max;
+                            
+                            return result;
+                        }
+
                         angular
                             .element(element)
                             .append('<div id="' + attrs.id + '"></div>')
@@ -283,6 +304,34 @@
                             center = [loc[0], loc[1]];
                             zoom = loc[2];
                         }
+
+                        $rootScope.$on(
+                            "doneLoading",
+                            function (ev, $scope) {
+                                const params = getFiltersParams();
+                                console.log("params", params )
+                                console.log();
+
+                                const filters = $scope.filter
+
+                                if (params['uf']) 
+                                    filters.strict.uf = params['uf'];
+
+
+                                if (params['povo']) 
+                                    filters.strict.povo = params['povo'];
+
+
+                                if (params['text']) 
+                                    filters.text = params['text'];
+
+                                if (params['date_min'] || params['date_max']) 
+                                    filters.date = { min: parseInt(params['date_min']), max: parseInt(params['date_max']) };
+
+                                $rootScope.$broadcast("updatedFilters", filters);
+                            },
+                            true
+                        );
 
                         var map = L.map(attrs.id, {
                             fullscreenControl: true,
@@ -370,7 +419,6 @@
                                         );
                                     else map.options.maxZoom = 18;
                                     
-                                    // console.log("loc.length", loc.length);
                                     // if (!loc.length && mapData.id !== prev.id) {
                                     if (!loc.length) {
                                         setTimeout(function () {

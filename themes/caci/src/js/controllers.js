@@ -94,12 +94,38 @@
                     loc.push(zoom);
                     loc = loc.join(",")
 
+                    const filters = $scope.filter;
+                    const uf = filters.strict.uf;
+                    const povo = filters.strict.povo;
+                    const text = filters.text;
+                    const date_min = filters.date.min;
+                    const date_max = filters.date.max;
+                    // console.log({ ...$state.params, loc, uf, povo, text, date_min, date_max })
+
                     $scope.embedUrl = $state.href(
                         $state.current.name || "home",
-                        { ...$state.params, loc},
+                        { ...$state.params, loc, uf, povo, text, date_min, date_max },
                         { absolute: true }
                     );
                 });
+
+                $rootScope.$on("updatedFilters", function (ev, map) {
+                    const filters = $scope.filter;
+                    const uf = filters.strict.uf;
+                    const povo = filters.strict.povo;
+                    const text = filters.text;
+                    const date_min = filters.date.min;
+                    const date_max = filters.date.max;
+                    // console.log({ ...$state.params, uf, povo, text, date_min, date_max })
+
+                    $scope.embedUrl = $state.href(
+                        $state.current.name || "home",
+                        { ...$state.params, uf, povo, text, date_min, date_max },
+                        { absolute: true }
+                    );
+                })
+
+                
 
                 $scope.getEmbedUrl = function () {
                     return encodeURIComponent($scope.embedUrl);
@@ -263,6 +289,7 @@
                     }
                     $q.all(promises).then(function () {
                         $scope.loading = false;
+                        $rootScope.$broadcast("doneLoading", $scope);
                     });
                 });
 
@@ -404,11 +431,32 @@
                     true
                 );
 
+                // $rootScope.$on("updatedFilters", function (ev, filters) {
+                //     console.log("AAAAAAAAAAAA", filters, $state.current.name);
+                //     if($state.current.name.length) {
+                //         const uf = filters.strict.uf;
+                //         const povo = filters.strict.povo;
+                //         const text = filters.text;
+                //         const date_min = filters.date.min;
+                //         const date_max = filters.date.max;
+
+                //         $state.go(
+                //             $state.current.name,
+                //             { uf, povo, text, date_min, date_max },
+                //             {
+                //                 notify: false,
+                //                 location: "replace",
+                //             }
+                //         );
+                //     }
+                // });
+
                 $scope.$watch(
                     filterString,
                     function (casos) {
                         $scope.filtered = casos;
                         setFilters(casos);
+                        $rootScope.$broadcast("updatedFilters", $scope.filter);
                     },
                     true
                 );
@@ -436,7 +484,7 @@
                 $scope.downloadCasos = function (casos) {
                     var toCsv = [];
                     _.each(casos, function (caso) {
-                        console.log(caso);
+                        //console.log(caso);
                         var c = {};
                         _.each(csvKeys, function (k) {
                             
@@ -544,7 +592,7 @@
                 Map,
                 $state
             ) {
-                console.log("Dossier.data", Dossier.data);
+                // console.log("Dossier.data", Dossier.data);
 
                 $scope.url = $state.href(
                     "home.dossier",
