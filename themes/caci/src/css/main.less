@@ -1,8 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Hind+Siliguri:400,700,300,500,600);
-@import url(https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic);
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
 
 body {
-    font-family: "PT Serif", serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 h1,
@@ -11,7 +10,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Hind Siliguri", "Helvetica", "Arial", sans-serif;
+    font-family: 'Open Sans', sans-serif;
     line-height: 1.2;
 }
 h1,
@@ -69,7 +68,7 @@ input[type="submit"] {
     letter-spacing: 1px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
-    font-family: "Hind Siliguri";
+    font-family: 'Open Sans', sans-serif;
     &:hover {
         color: #333;
     }
@@ -163,7 +162,7 @@ input[type="submit"] {
             margin-left: 20px;
             line-height: 1;
             font-weight: 600;
-            font-family: "Hind Siliguri", "Helvetica", "Arial", sans-serif;
+            font-family: 'Open Sans', sans-serif;
             margin-top: -10px;
             line-height: 50px;
         }
@@ -513,6 +512,8 @@ input[type="submit"] {
         border: 0;
         display: block;
         padding: 0;
+        width: ~"calc(100% - 60px)";
+        font-family: 'Open Sans', sans-serif;
     }
     .advanced-filters {
         background: #fff;
@@ -657,7 +658,7 @@ input[type="submit"] {
                             display: inline-block;
                             color: #666;
                             margin-right: 10px;
-                            font-family: "Hind Siliguri";
+                            font-family: 'Open Sans', sans-serif;
                             .icon {
                                 margin-right: 5px;
                             }
@@ -747,7 +748,7 @@ input[type="submit"] {
         color: #fff;
         padding-top: 30%;
         text-transform: uppercase;
-        font-family: "Hind Siliguri";
+        font-family: 'Open Sans', sans-serif;
     }
     #map {
         width: 100%;
@@ -829,21 +830,31 @@ input[type="submit"] {
             border: 1px solid rgba(0, 0, 0, 0.3);
             border-radius: 4px;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
             span {
                 font-weight: 600;
-                font-family: "Hind Siliguri";
+                font-family: 'Open Sans', sans-serif;
+                color: white;
             }
         }
         &.marker-cluster-small {
+            width: 35px !important;
+            height: 35px !important;
+
             div {
+                font-size: 14px;
                 background: rgba(50, 3, 3, 0.75);
             }
         }
         &.marker-cluster-medium {
-            width: 40px !important;
-            height: 40px !important;
+            width: 55px !important;
+            height: 55px !important;
             margin-top: -20px !important;
             margin-left: -20px !important;
+
             div {
                 line-height: 40px;
                 font-size: 16px;
@@ -851,10 +862,11 @@ input[type="submit"] {
             }
         }
         &.marker-cluster-large {
-            width: 50px !important;
-            height: 50px !important;
+            width: 75px !important;
+            height: 75px !important;
             margin-top: -25px !important;
             margin-left: -25px !important;
+
             div {
                 line-height: 50px;
                 font-size: 20px;
@@ -936,7 +948,7 @@ input[type="submit"] {
         display: inline-block;
         color: #666;
         margin-right: 10px;
-        font-family: "Hind Siliguri";
+        font-family: 'Open Sans', sans-serif;
         .icon {
             margin-right: 5px;
         }
