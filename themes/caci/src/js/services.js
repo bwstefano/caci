@@ -16,9 +16,9 @@
                     pages: function (params, filter) {
                         params = params || {};
                         params = _.extend(
-                            {
-                                type: "page",
-                            },
+                            // {
+                            //     type: "page",
+                            // },
                             params
                         );
 
@@ -36,7 +36,7 @@
 
                         return $http({
                             method: "GET",
-                            url: vindig.api + "/posts",
+                            url: vindig.api + "/pages",
                             params: params,
                         });
                     },
@@ -164,6 +164,10 @@
                     },
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
+                    },
+                    getPage: function (id) {
+                        console.log(id);
+                        return $http.get(vindig.api + "/pages/" + id);
                     },
                     getDossier: function (id) {                        
                         return $http({

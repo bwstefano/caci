@@ -734,7 +734,8 @@
             "Vindig",
             function ($scope, $sce, Page, Vindig) {
                 $scope.page = Page.data;
-                $scope.page.content = $sce.trustAsHtml($scope.page.content);
+                console.log("Page.data", Page.data)
+                $scope.page.content = $sce.trustAsHtml($scope.page.content.rendered);
 
                 $scope.contacted = false;
                 $scope.contacting = false;
@@ -1827,7 +1828,8 @@ require("./util");
                             "$stateParams",
                             "Vindig",
                             function ($stateParams, Vindig) {
-                                return Vindig.getPost($stateParams.id);
+                                console.log($stateParams,$stateParams);
+                                return Vindig.getPage($stateParams.id);
                             },
                         ],
                     },
@@ -1988,9 +1990,9 @@ require("./util");
                     pages: function (params, filter) {
                         params = params || {};
                         params = _.extend(
-                            {
-                                type: "page",
-                            },
+                            // {
+                            //     type: "page",
+                            // },
                             params
                         );
 
@@ -2008,7 +2010,7 @@ require("./util");
 
                         return $http({
                             method: "GET",
-                            url: vindig.api + "/posts",
+                            url: vindig.api + "/pages",
                             params: params,
                         });
                     },
@@ -2136,6 +2138,10 @@ require("./util");
                     },
                     getPost: function (id) {
                         return $http.get(vindig.api + "/posts/" + id);
+                    },
+                    getPage: function (id) {
+                        console.log(id);
+                        return $http.get(vindig.api + "/pages/" + id);
                     },
                     getDossier: function (id) {                        
                         return $http({

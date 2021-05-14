@@ -81,7 +81,8 @@ require("./util");
                             "$stateParams",
                             "Vindig",
                             function ($stateParams, Vindig) {
-                                return Vindig.getPost($stateParams.id);
+                                console.log($stateParams,$stateParams);
+                                return Vindig.getPage($stateParams.id);
                             },
                         ],
                     },

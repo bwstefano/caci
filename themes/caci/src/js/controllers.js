@@ -733,7 +733,8 @@
             "Vindig",
             function ($scope, $sce, Page, Vindig) {
                 $scope.page = Page.data;
-                $scope.page.content = $sce.trustAsHtml($scope.page.content);
+                console.log("Page.data", Page.data)
+                $scope.page.content = $sce.trustAsHtml($scope.page.content.rendered);
 
                 $scope.contacted = false;
                 $scope.contacting = false;

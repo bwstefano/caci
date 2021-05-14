@@ -51,7 +51,7 @@
         </div>
         <ul>
           <li ng-repeat="page in pages">
-            <a ui-sref="home.page({id: page.ID})">{{page.title}}</a>
+            <a ui-sref="home.page({id: page.id})">{{page.title.rendered}}</a>
           </li>
           <li id="by">
             <h3>Desenvolvido por</h3>
