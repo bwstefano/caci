@@ -1261,7 +1261,7 @@
 
                         var markerLayer = L.markerClusterGroup({
                             zIndex: 100,
-                            maxClusterRadius: 48,
+                            maxClusterRadius: 38,
                             polygonOptions: {
                                 fillColor: "#000",
                                 color: "#000",
