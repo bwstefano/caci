@@ -8,6 +8,7 @@
   "author": "Miguel Peixe <miguel@cardume.art.br> (http://codigourbano.org/)",
   "license": "ISC",
   "devDependencies": {
+    "bestzip": "^2.2.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^4.0.1",
     "grunt-contrib-copy": "^0.8.2",
