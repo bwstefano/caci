@@ -1,0 +1,27 @@
+name: Deploy to WordPress.org
+on:
+  push:
+    tags:
+    - "*"
+jobs:
+  tag:
+    name: New tag
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build # Remove or modify this step as needed
+      run: |
+        cd ${{ github.workspace }}/themes/caci
+        npm install grunt-cli
+        npm install
+        ./node_modules/.bin/grunt build
+
+    - uses: thedoctor0/zip-release@master
+      with:
+        type: 'zip'
+        filename: 'release.zip'
+        exclusions: '*.git* /*node_modules/* .editorconfig'
+    - uses: actions/upload-artifact@v1
+      with:
+        name: theme
+        path: ${{ github.workspace }}/release.zip
