@@ -15,9 +15,10 @@ jobs:
         npm install grunt-cli
         npm install
         ./node_modules/.bin/grunt build
+
     - uses: actions/upload-artifact@v1
       with:
         name: theme
-          path: |
-            ${{ github.workspace }}/themes/caci
-            !${{ github.workspace }}/themes/caci/.node-modules
+        path: |
+          themes/caci
+          !themes/caci/.node-modules
