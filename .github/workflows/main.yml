@@ -21,7 +21,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: theme
+        name: caci
         path: |
           ./themes/caci/*
           !themes/caci/node_modules
