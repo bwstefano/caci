@@ -20,5 +20,5 @@ jobs:
       with:
         name: theme
         path: |
-          themes/caci
-          !themes/caci/.node-modules
+          ${{ github.workspace }}/themes/caci
+          !${{ github.workspace }}/themes/caci/.node-modules
