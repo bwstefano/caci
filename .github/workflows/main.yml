@@ -23,5 +23,5 @@ jobs:
       with:
         name: theme
         path: |
-          caci
+          ./caci/*
           !caci/.node-modules
