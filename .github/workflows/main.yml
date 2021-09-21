@@ -17,6 +17,7 @@ jobs:
         ./node_modules/.bin/grunt build
         cd ${{ github.workspace }}/themes
         ls
+        ls caci
 
     - uses: actions/upload-artifact@v2
       with:
