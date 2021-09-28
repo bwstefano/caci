@@ -1,75 +1,78 @@
 @font-face {
-	font-family: 'icomoon';
-	src:  url('../fonts/icomoon.eot?sysr8f');
-	src:  url('../fonts/icomoon.eot?sysr8f#iefix') format('embedded-opentype'),
-	  url('../fonts/icomoon.ttf?sysr8f') format('truetype'),
-	  url('../fonts/icomoon.woff?sysr8f') format('woff'),
-	  url('../fonts/icomoon.svg?sysr8f#icomoon') format('svg');
-	font-weight: normal;
-	font-style: normal;
-	font-display: block;
-  }
+  font-family: 'icomoon';
+  src:  url('../fonts/icomoon.eot?msty0g');
+  src:  url('../fonts/icomoon.eot?msty0g#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?msty0g') format('truetype'),
+    url('../fonts/icomoon.woff?msty0g') format('woff'),
+    url('../fonts/icomoon.svg?msty0g#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
 
-  [class^="icon-"], [class*=" icon-"] {
-	/* use !important to prevent issues with browser extensions that change fonts */
-	font-family: 'icomoon' !important;
-	speak: never;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-  
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-  }
-  
-  .icon-pin:before {
-	content: "\e900";
-  }
-  .icon-download:before {
-	content: "\e90e";
-  }
-  .icon-caution:before {
-	content: "\e901";
-  }
-  .icon-bolt:before {
-	content: "\e902";
-  }
-  .icon-map:before {
-	content: "\e903";
-  }
-  .icon-twitter:before {
-	content: "\e904";
-  }
-  .icon-facebook-square:before {
-	content: "\e905";
-  }
-  .icon-user:before {
-	content: "\e906";
-  }
-  .icon-home:before {
-	content: "\e907";
-  }
-  .icon-calendar:before {
-	content: "\e908";
-  }
-  .icon-chevron-small-right:before {
-	content: "\e909";
-  }
-  .icon-chevron-left:before {
-	content: "\e90a";
-  }
-  .icon-chevron-down:before {
-	content: "\e90b";
-  }
-  .icon-chevron-up:before {
-	content: "\e90c";
-  }
-  .icon-map-marker:before {
-	content: "\e90d";
-  }
-  .icon-circle:before {
-	content: "\ea56";
-  }
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-pin:before {
+  content: "\e900";
+}
+.icon-search:before {
+  content: "\e90f";
+}
+.icon-download:before {
+  content: "\e90e";
+}
+.icon-caution:before {
+  content: "\e901";
+}
+.icon-bolt:before {
+  content: "\e902";
+}
+.icon-map:before {
+  content: "\e903";
+}
+.icon-twitter:before {
+  content: "\e904";
+}
+.icon-facebook-square:before {
+  content: "\e905";
+}
+.icon-user:before {
+  content: "\e906";
+}
+.icon-home:before {
+  content: "\e907";
+}
+.icon-calendar:before {
+  content: "\e908";
+}
+.icon-chevron-small-right:before {
+  content: "\e909";
+}
+.icon-chevron-left:before {
+  content: "\e90a";
+}
+.icon-chevron-down:before {
+  content: "\e90b";
+}
+.icon-chevron-up:before {
+  content: "\e90c";
+}
+.icon-map-marker:before {
+  content: "\e90d";
+}
+.icon-circle:before {
+  content: "\ea56";
+}
