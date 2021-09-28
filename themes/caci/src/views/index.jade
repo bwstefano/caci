@@ -26,11 +26,12 @@ section#content(autoscroll='false')
             a(ui-sref='home.case({caseId: caso.id})' force-onclick="'move'" force-parent='casos') {{caso | casoName}}
           .location
             p.location-info
+              span.icon.icon-map-marker
               a(ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html='caso | caseLocation')
           header.caso-header
             .header-meta
               .age.meta(ng-show='caso.idade')
-                span.icon.icon-chevron-small-right
+                span.icon.icon-user
                 p {{caso.idade}} anos
               .date.meta
                 span.icon.icon-calendar
