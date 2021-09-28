@@ -22,13 +22,12 @@ section#content(autoscroll='false')
     ul.caso-list(ng-show='casos.length && initialized')
       li(ng-repeat='caso in (filtered | orderBy:"nome" | emptyToEnd:"nome" | offset:currentPage*itemsPerPage | limitTo:itemsPerPage)')
         article.clearfix
+          h3
+            a(ui-sref='home.case({caseId: caso.id})' force-onclick="'move'" force-parent='casos') {{caso | casoName}}
           .location
-            span.icon.icon-pin
             p.location-info
               a(ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html='caso | caseLocation')
           header.caso-header
-            h3
-              a(ui-sref='home.case({caseId: caso.id})' force-onclick="'move'" force-parent='casos') {{caso | casoName}}
             .header-meta
               .age.meta(ng-show='caso.idade')
                 span.icon.icon-chevron-small-right
