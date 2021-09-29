@@ -502,7 +502,7 @@ input[type="submit"] {
         color: #666;
     }
     &:before {
-        content: "\e6d9";
+        content: "\e90f";
         font-family: "icomoon";
         speak: none;
         font-style: normal;
@@ -611,7 +611,7 @@ input[type="submit"] {
         margin: 23px 20px 20px 0;
         padding: 0;
         border-color: transparent;
-        color: #F5F5F5;
+        color: #999999;
     }
     .results-count{
         background-color: #320303; 
@@ -712,8 +712,9 @@ input[type="submit"] {
                         text-decoration: none;
                     }
                     .icon {
-                        font-size: 22px;
+                        font-size: 1.375em !important;
                         text-shadow: 2px 1px 0 rgba(255, 15, 0, 0.6);
+                        margin-right: 12px;
                     }
                     p.location-info {
                         margin: 8px 0;
@@ -856,6 +857,29 @@ input[type="submit"] {
             div {
                 font-size: 14px;
                 background: rgba(50, 3, 3, 0.75);
+            }
+        }
+        &.marker-cluster-small.hydroelectric-cluster {
+            div{
+                font-size: 13px !important;
+            }
+        }
+        &.hydroelectric-cluster{
+            border: 2px solid #71B2FF;
+            div{
+                background-color: rgba(17,17,17,0.75) !important;
+                display: flex;
+                flex-direction: column;
+              
+                .icon-bolt{
+                    font-size: 9px;
+                    margin-bottom: 2px;
+                }
+              
+                span{
+                    color: #DEC740;
+                    line-height: 1 !important;
+                }
             }
         }
         &.marker-cluster-medium {
