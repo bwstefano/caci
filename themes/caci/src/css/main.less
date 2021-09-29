@@ -859,17 +859,14 @@ input[type="submit"] {
                 background: rgba(50, 3, 3, 0.75);
             }
         }
-        &.marker-cluster-small.hydroelectric-cluster {
-            div{
-                font-size: 13px !important;
-            }
-        }
         &.hydroelectric-cluster{
             border: 2px solid #71B2FF;
+            background-color: rgba(17,17,17,0.75) !important;
+            
             div{
-                background-color: rgba(17,17,17,0.75) !important;
                 display: flex;
                 flex-direction: column;
+                background-color: rgba(17,17,17,0.75) !important;
               
                 .icon-bolt{
                     font-size: 9px;
@@ -879,6 +876,13 @@ input[type="submit"] {
                 span{
                     color: #DEC740;
                     line-height: 1 !important;
+                }
+            }
+        }
+        &.marker-cluster-small.hydroelectric-cluster {
+            div{
+                &:last-child span{
+                    font-size: 13px !important;
                 }
             }
         }

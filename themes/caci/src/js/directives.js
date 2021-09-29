@@ -515,19 +515,19 @@
                                 var childCount = cluster.getChildCount();
                                 let iconName = '';
 
-                                var classes = "marker-cluster";
+                                let classes = "marker-cluster marker-cluster-";
                               
-                                // if(childCount == 1){
-                                //     classes += "unique";
-                                // } else if (childCount < 10) {
-                                //     classes += "small";
-                                // } else if (childCount < 100) {
-                                //     c += "medium";
-                                // } else {
-                                //     classes += "large";
-                                // }
+                                if(childCount == 1){
+                                    classes += "unique";
+                                } else if (childCount < 10) {
+                                    classes += "small";
+                                } else if (childCount < 100) {
+                                    c += "medium";
+                                } else {
+                                    classes += "large";
+                                }
                                 
-                                hydroelectric = true;
+                                //hydroelectric = true;
                                
                                 if(hydroelectric){
                                     iconName = "icon icon-bolt";
