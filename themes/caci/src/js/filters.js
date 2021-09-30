@@ -126,24 +126,24 @@
                             location =
                                 '<span class="ti"><span class="label">Terra indígena</span> ' +
                                 data.terra_indigena +
-                                "</span>";
+                                ", </span>";
                         else
                             location =
                                 '<span class="ti">' +
                                 data.terra_indigena +
-                                "</span>";
+                                ", </span>";
                     }
                     if (data.municipio) {
                         if (showLabels)
                             location +=
                                 '<span class="mun"><span class="label">Município</span> ' +
                                 data.municipio +
-                                "</span>";
+                                " - </span>";
                         else
                             location +=
-                                '<span class="mun">' +
+                                '<span class="mun"> ' +
                                 data.municipio +
-                                "</span>";
+                                " - </span>";
                     }
                     if (data.uf) {
                         if (showLabels)
