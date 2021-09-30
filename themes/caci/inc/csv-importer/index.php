@@ -108,12 +108,8 @@ class Hacklab_CSV_Importer {
             if ( isset( $post[ 'descricao'] ) ) {
                 $case[ 'post_content'] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['descricao'] ) ) );
             }
-
             if ( empty( $case[ 'post_title' ] ) ) {
                 $case[ 'post_title' ] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['apelido'] ) ) );
-            }
-            if ( empty( $case[ 'post_title' ] ) ) {
-                $case[ 'post_title' ] = wp_strip_all_tags( esc_textarea( $post['apelido'] ) );
             }
             
             foreach( $post as $key => $value ) {
@@ -152,8 +148,6 @@ class Hacklab_CSV_Importer {
             if ( is_string( $this->response ) ) {
                 echo $this->response;
             }
-        } else {
-            echo 'Erro! Nenhum caso importado.';
         }
     }
 }

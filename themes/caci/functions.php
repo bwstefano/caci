@@ -279,7 +279,7 @@ add_filter('jeo_enabled_post_types', 'add_case_post_type', 10, 1);
 //var_dump(pods_field_display('configuracoes_tema', null, 'mapa_em_destaque'));
 // die();
 
-/**
+/*
  * CSV Importer
  */
 require_once(STYLESHEETPATH . '/inc/csv-importer/index.php');
