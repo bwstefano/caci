@@ -34,13 +34,14 @@
     <header id="masthead" ng-class="{collapsed: initialized}">
       <div class="header-main">
         <h1><a ui-sref="home" ng-click="home()">C<span>A</span>CI</a></h1>
+        <p class="subtitle">Cartografia de <span class="red">Ataques</span> Contra Indígenas</p>
         <aside id="intro" ng-hide="initialized">
           <p><?php bloginfo('description'); ?></p>
         </aside>
         <nav class="button-nav">
           <a ui-sref="home.tour" ng-click="init();" ng-hide="initialized" class="button hide-if-mobile" ng-class="{primary: accessedTour == 0}">Faça o tour</a>
           <a href="javascript:void(0);" ng-click="init();disableTour();" ng-hide="initialized" class="button primary-if-mobile" ng-class="{primary: accessedTour == 1}">Acesse</a>
-          </nav>
+        </nav>
       </div>
       <?php //include_once(STYLESHEETPATH . '/views/filters.html'); ?>
       <nav id="mastnav" ng-class="{active: showNav, 'overflow-visible': showDossiers && !showNav}">

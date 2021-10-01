@@ -309,8 +309,6 @@
                             "doneLoading",
                             function (ev, $scope) {
                                 const params = getFiltersParams();
-                                console.log("params", params )
-                                console.log();
 
                                 const filters = $scope.filter
 
@@ -493,12 +491,12 @@
                          * Markers
                          */
                         var icon = L.divIcon({
-                            className: "pin",
+                            className: "icon icon-pin",
                             iconSize: [18, 18],
                             iconAnchor: [9, 18],
                             popupAnchor: [0, -18],
                         });
-
+                        
                         var markerLayer = L.markerClusterGroup({
                             zIndex: 100,
                             maxClusterRadius: 38,
@@ -515,22 +513,33 @@
                             },
                             iconCreateFunction: function (cluster) {
                                 var childCount = cluster.getChildCount();
+                                let iconName = '';
 
-                                var c = " marker-cluster-";
-                                if (childCount < 10) {
-                                    c += "small";
+                                let classes = "marker-cluster marker-cluster-";
+                              
+                                if(childCount == 1){
+                                    classes += "unique";
+                                } else if (childCount < 10) {
+                                    classes += "small";
                                 } else if (childCount < 100) {
                                     c += "medium";
                                 } else {
-                                    c += "large";
+                                    classes += "large";
+                                }
+                                
+                                //hydroelectric = true;
+                               
+                                if(hydroelectric){
+                                    iconName = "icon icon-bolt";
+                                    classes += " hydroelectric-cluster";
+                                } else if(caution){
+                                    iconName = "icon icon-alert";
+                                    classes += " alert";
                                 }
 
                                 var icon = L.divIcon({
-                                    html:
-                                        "<div><span>" +
-                                        childCount +
-                                        "</span></div>",
-                                    className: "marker-cluster" + c,
+                                    html: `<div><span class="${iconName}"></span><span> ${childCount} </span></div>`,
+                                    className: classes,
                                     iconSize: new L.Point(40, 40),
                                 });
 

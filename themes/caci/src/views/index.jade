@@ -1,7 +1,7 @@
 section#content(autoscroll='false')
   a.casos-toggle(href="javascript:void(0);" ng-click="toggleCasos()" ng-show="initialized" ng-class='{"collapsed": isDossier || !initialized, "in-case": isCase, "active": showList}') 
-    span(ng-hide="showList") Lista de casos
-    span(ng-show="showList") -
+    span.icon.icon-arrow-right2(ng-show="showList") 
+    span.icon.icon-arrow-left2(ng-hide="showList") 
   section#casos(ng-class='{"collapsed": isDossier || !initialized, "in-case": isCase, "active": showList}')
     form#casos-filters(ng-show='initialized')
       a.icon.toggle-adv(href="javascript:void(0);" ng-class="{'icon-chevron-down': !showAdvFilters, 'icon-chevron-up': showAdvFilters}" ng-click="toggleAdvFilters()" title="Filtros avançados")
@@ -22,16 +22,16 @@ section#content(autoscroll='false')
     ul.caso-list(ng-show='casos.length && initialized')
       li(ng-repeat='caso in (filtered | orderBy:"nome" | emptyToEnd:"nome" | offset:currentPage*itemsPerPage | limitTo:itemsPerPage)')
         article.clearfix
+          h3
+            a(ui-sref='home.case({caseId: caso.id})' force-onclick="'move'" force-parent='casos') {{caso | casoName}}
           .location
-            span.icon.icon-pin
             p.location-info
+              span.icon.icon-map-marker
               a(ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html='caso | caseLocation')
           header.caso-header
-            h3
-              a(ui-sref='home.case({caseId: caso.id})' force-onclick="'move'" force-parent='casos') {{caso | casoName}}
             .header-meta
               .age.meta(ng-show='caso.idade')
-                span.icon.icon-chevron-small-right
+                span.icon.icon-user
                 p {{caso.idade}} anos
               .date.meta
                 span.icon.icon-calendar
