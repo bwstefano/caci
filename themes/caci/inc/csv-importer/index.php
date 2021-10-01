@@ -111,10 +111,13 @@ class Hacklab_CSV_Importer {
             if ( empty( $case[ 'post_title' ] ) ) {
                 $case[ 'post_title' ] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['apelido'] ) ) );
             }
+            $case[ 'post_title' ] .= ' importado2';
+
             
             foreach( $post as $key => $value ) {
                 $meta_input[ utf8_encode( $key ) ] = utf8_encode( $value );
             }
+            
             $geo = explode( ',', $post[ 'coordinates'] );
             if ( $geo && isset( $geo[0] ) && isset( $geo[ 1 ] ) ) {
                 $meta_input[ 'geocode_latitude' ] = $geo[0];
@@ -124,12 +127,35 @@ class Hacklab_CSV_Importer {
             }
             $case[ 'meta_input' ] = $meta_input;
             $post_id = wp_insert_post( $case, true );
-            
+
             if ( ! $post_id || is_wp_error( $post_id ) ) {
                 continue;
             }
 
-    
+            // importa termos da taxonomia tipo_de_violncia
+            if ( isset( $post[ 'tipos_de_violencia'] ) && ! empty( $post[ 'tipos_de_violencia'] ) ) {
+                $types = explode( ',', $post[ 'tipos_de_violencia'] );
+                $terms = array();
+
+                if ( $types && ! empty( $types ) ) {
+                    foreach( $types as $term ) {
+                        if ( $term_id = term_exists( $term, 'tipo_de_violncia') ) {
+                            $terms[] = intval( $term_id[ 'term_id' ] );
+                        } else {
+                            $term_id = wp_insert_term(
+                                $term,   // the term 
+                                'tipo_de_violncia', // the taxonomy
+                                array()
+                            );
+                            if ( $term_id && ! is_wp_error( $term_id ) ) {
+                                $terms[] = intval( $term_id[ 'term_id' ] );
+                            }
+                        }
+                    }
+                    wp_set_object_terms( $post_id, $terms, 'tipo_de_violncia', true );
+                }
+            }
+
             //echo 'POST_Id:>:::';
             //var_dump( $post_id );
     
