@@ -89,6 +89,8 @@ class Hacklab_CSV_Importer {
                 return 'Extensão de arquivo inválida. Selecione um arquivo CSV e tente novamente.';
             }    
         }
+        $hour = date('H:m:s');
+
         $count = 0;
         foreach( $posts as $post ) {
             // Create post object
@@ -100,6 +102,11 @@ class Hacklab_CSV_Importer {
                 'post_type'     => 'case',
                 'post_author'   => 1,
             );
+            if ( isset( $post[ 'dia'] ) && isset( $post[ 'mes'] ) && isset( $post[ 'ano'] ) ) {
+                $time_str = sprintf( '%s-%s-%s %s', $post[ 'ano'], $post[ 'mes'], $post[ 'dia'], $hour );
+                $case[ 'post_date' ] = date( "Y-m-d H:i:s", strtotime( $time_str ) );
+                
+            }
             $meta_input = array();
 
             if ( isset( $post[ 'nome'] ) ) {
@@ -111,20 +118,11 @@ class Hacklab_CSV_Importer {
             if ( empty( $case[ 'post_title' ] ) ) {
                 $case[ 'post_title' ] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['apelido'] ) ) );
             }
-            $case[ 'post_title' ] .= ' importado2';
-
             
             foreach( $post as $key => $value ) {
                 $meta_input[ utf8_encode( $key ) ] = utf8_encode( $value );
             }
             
-            $geo = explode( ',', $post[ 'coordinates'] );
-            if ( $geo && isset( $geo[0] ) && isset( $geo[ 1 ] ) ) {
-                $meta_input[ 'geocode_latitude' ] = $geo[0];
-                $meta_input[ 'geocode_longitude' ] = $geo[1];
-                $meta_input[ '_geocode_lat_p' ] = $geo[0];
-                $meta_input[ '_geocode_lon_p' ] = $geo[1];
-            }
             $case[ 'meta_input' ] = $meta_input;
             $post_id = wp_insert_post( $case, true );
 
@@ -132,7 +130,36 @@ class Hacklab_CSV_Importer {
                 continue;
             }
 
-            // importa termos da taxonomia tipo_de_violncia
+            $meta_input = array();
+            $geo = explode( ',', $post[ 'coordinates'] );
+            if ( $geo && isset( $geo[0] ) && isset( $geo[ 1 ] ) ) {
+                $geo[0] = floatval( $geo[0] );
+                $geo[1] = floatval( $geo[1] );
+
+                $meta_input[ 'geocode_latitude' ] = $geo[1];
+                $meta_input[ 'geocode_longitude' ] = $geo[0];
+                $meta_input[ '_geocode_lat_p' ] = $geo[1];
+                $meta_input[ '_geocode_lon_p' ] = $geo[0];
+
+                $meta_input[ '_related_point' ] = array(
+                        'relevance'                 => 'primary',
+                        '_geocode_lat'              => $geo[1],
+                        '_geocode_lon'              => $geo[0],
+                        '_geocode_city_level_1'     => $post[ 'municipio'],
+                        '_geocode_city'             => $post[ 'municipio'],
+                        '_geocode_region_level_3'   => 'Brasil',
+                        '_geocode_region_level_2'   => $post[ 'uf' ],
+                        '_geocode_region_level_1'   => $post[ 'municipio'],
+                        '_geocode_country_code'     => 'BR',
+                        '_geocode_country'          => 'Brasil',
+                        '_geocode_full_address'     => $post[ 'municipio'] . ', ' . $post[ 'uf'] . ', Brasil',      
+                );
+                foreach ( $meta_input as $key => $value ) {
+                    add_post_meta( $post_id, $key, $value, false );
+                }
+            }
+
+            // importa termos da taxonomia tipos_de_violencia
             if ( isset( $post[ 'tipos_de_violencia'] ) && ! empty( $post[ 'tipos_de_violencia'] ) ) {
                 $types = explode( ',', $post[ 'tipos_de_violencia'] );
                 $terms = array();
