@@ -446,9 +446,18 @@ input[type="submit"] {
         flex-direction: column;
         border-top: 1px solid rgba(0, 0, 0, 0.4);
         border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-        background: #111;
+        background: #fff;
         height: inherit;
         min-height: 100vh;
+
+        .dossiers-header{
+            color: #fff;
+            background-color: #320303;
+            padding: 93px 31px;
+            margin: 0;
+            text-transform: capitalize;  
+        }
+
         li {
             display: block;
             width: 100%;
@@ -457,8 +466,9 @@ input[type="submit"] {
             box-sizing: border-box;
             padding: 10px 20px;
             border-right: 1px solid rgba(0, 0, 0, 0.4);
-            color: #f0f0f0;
+            color: #111;
             position: relative;
+            border-bottom: solid 1px #ddd;
             &:last-child {
                 border-right: 0;
             }
