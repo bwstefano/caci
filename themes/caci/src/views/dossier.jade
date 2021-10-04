@@ -1,22 +1,7 @@
 article#dossier.single(ng-hide="hiddenContent")
   header.dossier-header
     h1(ng-bind-html="dossier.title")
-  section.dossier-content.single-content(tag-external)
-    a.home-link(ui-sref="home" attach-to-content)
-      span.icon.icon-home
-    p.excerpt(ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt")
-    p.author por {{dossier.author.name}}
-    .share
-      a.button.show-if-mobile(ng-href="{{whatsapp}}" data-action="share/whatsapp/share")
-        img(ng-src="{{base + '/img/whatsapp.png'}}")
-      a.facebookShare(facebook-feed-share data-url="{{url}}")
-      a(twitter data-count="horizontal" data-size="medium" data-text="{{dossier.title}}" data-url="{{url}}")
-      a(href="javascript:window.print();" class="icon-print")
-    div(ng-bind-html="dossier.content" fit-vids)
-  section.dossier-author
-    h2 Autor
-    h3 {{dossier.author.name}}
-    p {{dossier.author.description}}
+
 
 #dossier-case(ui-view)
 
