@@ -114,6 +114,14 @@
             },
         ]);
 
+        app.filter("dossieExcerpt", [
+            "$sce", function ($sce) {
+                return function (input) {
+                    return $sce.trustAsHtml(input.excerpt.rendered);
+                }
+            }
+        ]);
+
         app.filter("caseLocation", [
             "$sce",
             function ($sce) {
