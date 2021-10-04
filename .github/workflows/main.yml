@@ -2,7 +2,8 @@ name: Generate zip file
 on:
   push:
     branch:
-    - "*"
+    - master
+    - develop
 jobs:
   tag:
     name: New tag
