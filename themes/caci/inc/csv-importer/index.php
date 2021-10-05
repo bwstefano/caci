@@ -131,7 +131,9 @@ class Hacklab_CSV_Importer {
             }
 
             $meta_input = array();
-            $geo = explode( ',', $post[ 'coordinates'] );
+            $geo = str_replace( array( '[', '"', ']' ), '', $post[ 'coordinates'] );
+            $geo = trim( $geo );
+            $geo = explode( ',', $geo );
             if ( $geo && isset( $geo[0] ) && isset( $geo[ 1 ] ) ) {
                 $geo[0] = floatval( $geo[0] );
                 $geo[1] = floatval( $geo[1] );
@@ -155,7 +157,10 @@ class Hacklab_CSV_Importer {
                         '_geocode_full_address'     => $post[ 'municipio'] . ', ' . $post[ 'uf'] . ', Brasil',      
                 );
                 foreach ( $meta_input as $key => $value ) {
-                    add_post_meta( $post_id, $key, $value, false );
+                    $response = add_post_meta( $post_id, $key, $value, false );
+                    echo '<pre>';
+                    var_dump( array( $response, $key, $value) );
+                    echo '</pre>';
                 }
             }
 
