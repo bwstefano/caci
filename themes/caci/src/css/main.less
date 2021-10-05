@@ -406,7 +406,6 @@ input[type="submit"] {
 }
 
 #dossies {
-    background: #000 !important;
     position: fixed !important;
     top: 50px;
     left: 0;
@@ -415,8 +414,9 @@ input[type="submit"] {
     transition: all 0.4s ease-in-out;
     max-height: 0;
     overflow: hidden;
+    background: none !important;
     &.active {
-        max-height: 600px;
+        max-height: 100vh;
     }
     &.collapsed {
         width: 70%;
@@ -441,21 +441,49 @@ input[type="submit"] {
         list-style: none;
         margin: 0;
         padding: 0;
-        width: 100%;
-        display: block;
-        border-top: 1px solid rgba(0, 0, 0, 0.4);
+        display: flex;
+        max-width: 500px;
+        flex-direction: column;
         border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-        background: #111;
+        background: #fff;
+        height: inherit;
+        min-height: 100vh;
+        .icon-cross{
+            float: right;
+            margin: 15px;
+            color: #fff;
+            background-color: #111;
+            padding: 10px;
+            text-align: center;
+            font-size: 22px !important;
+            line-height: 1 !important;
+            cursor: pointer;
+        }
+        .icon-cross:hover{
+            background-color: #444;
+        }
+        .dossiers-header{
+            color: #fff;
+            background-color: #320303;
+            padding: 90px 31px 90px 70px;
+            margin: 0;
+            text-transform: capitalize;  
+        }
+
         li {
             display: block;
-            width: 25%;
-            height: 130px;
             float: left;
             box-sizing: border-box;
             padding: 10px 20px;
-            border-right: 1px solid rgba(0, 0, 0, 0.4);
-            color: #f0f0f0;
+            color: #111;
             position: relative;
+            border-bottom: solid 1px #ddd;
+            margin: 0 30px 0 50px;
+            .excerpt{
+                max-height: 88px;
+                overflow: hidden;
+                padding-bottom: 30px;
+            }
             &:last-child {
                 border-right: 0;
             }
@@ -655,8 +683,8 @@ input[type="submit"] {
                 // margin: 10px;
                 padding: 20px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-                background: rgba(255, 255, 255, 0.9);
-                // background: #fff;
+                // background: rgba(255, 255, 255, 0.9);
+                background: #fff;
                 
                 h3 {
                     font-size: 24px;

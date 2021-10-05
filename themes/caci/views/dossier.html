@@ -3,16 +3,5 @@
   <header class="dossier-header">
     <h1 ng-bind-html="dossier.title"></h1>
   </header>
-  <section tag-external class="dossier-content single-content"><a ui-sref="home" attach-to-content class="home-link"><span class="icon icon-home"></span></a>
-    <p ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt" class="excerpt"></p>
-    <p class="author">por {{dossier.author.name}}</p>
-    <div class="share"><a ng-href="{{whatsapp}}" data-action="share/whatsapp/share" class="button show-if-mobile"><img ng-src="{{base + '/img/whatsapp.png'}}"></a><a facebook-feed-share data-url="{{url}}" class="facebookShare"></a><a twitter data-count="horizontal" data-size="medium" data-text="{{dossier.title}}" data-url="{{url}}"></a><a href="javascript:window.print();" class="icon-print"></a></div>
-    <div ng-bind-html="dossier.content" fit-vids></div>
-  </section>
-  <section class="dossier-author">
-    <h2>Autor</h2>
-    <h3>{{dossier.author.name}}</h3>
-    <p>{{dossier.author.description}}</p>
-  </section>
 </article>
 <div id="dossier-case" ui-view></div><a href="javascript:void(0);" ng-click="toggleContent()" class="map-toggle show-if-mobile"><span ng-show="hiddenContent">Ver dossiê</span><span ng-hide="hiddenContent"><span class="icon icon-map"> </span>Ver mapa</span></a>
