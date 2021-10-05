@@ -158,9 +158,6 @@ class Hacklab_CSV_Importer {
                 );
                 foreach ( $meta_input as $key => $value ) {
                     $response = add_post_meta( $post_id, $key, $value, false );
-                    echo '<pre>';
-                    var_dump( array( $response, $key, $value) );
-                    echo '</pre>';
                 }
             }
 
