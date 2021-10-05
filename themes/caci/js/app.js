@@ -1276,21 +1276,19 @@
                             iconCreateFunction: function (cluster) {
                                 var childCount = cluster.getChildCount();
 
-                                var c = " marker-cluster-";
+                                let classes = "marker-cluster marker-cluster-";
+                              
                                 if (childCount < 10) {
-                                    c += "small";
+                                    classes += "small";
                                 } else if (childCount < 100) {
-                                    c += "medium";
+                                    classes += "medium";
                                 } else {
-                                    c += "large";
+                                    classes += "large";
                                 }
 
                                 var icon = L.divIcon({
-                                    html:
-                                        "<div><span>" +
-                                        childCount +
-                                        "</span></div>",
-                                    className: "marker-cluster" + c,
+                                    html: `<div><span> ${childCount}</span></div>`,
+                                    className: classes,
                                     iconSize: new L.Point(40, 40),
                                 });
 
