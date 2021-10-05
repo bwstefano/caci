@@ -4,8 +4,8 @@ article#case.single
     a(href="javascript:void(0);" ng-click="prev()" class="icon icon-chevron-left")
     a(href="javascript:void(0);" ng-click="next()" class="icon icon-chevron-right")
     h1 {{caso | casoName}}
+    span.icon.icon-map-marker
     .location
-      span.icon.icon-pin
       p.location-info
         a(ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html='caso | caseLocation:true')
     .case-meta
