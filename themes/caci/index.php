@@ -65,17 +65,21 @@
           </li>
           <li id="dossies" ng-class="{active: showDossiers && !showNav}">
             <ul class="dossie-list clearfix">
-              <div>
-                <span ng-click="toggleDossiers()" href="javascript:void(0);" ng-show="initialized" class="icon icon-cross"></span>
-                <h2 class="dossiers-header">Dossiês</h2>
-              </div>
-              <li ng-repeat="dossier in dossiers">
-                <!-- <div style="background-image:url({{dossier.featured_image.attachment_meta.sizes.large.url}});" class="image"></div> -->
-                <article>
-                  <h3><a ui-sref="home.dossier({dossierId: dossier.id})">{{dossier.title.rendered}}</a></h3>
-                  <div class="excerpt" ng-bind-html="dossier | dossieExcerpt"></div>
-                </article>
+              <li>
+                <div class="dossiers-header">
+                  <span ng-click="toggleDossiers()" href="javascript:void(0);" ng-show="initialized" class="icon icon-cross"></span>
+                  <h2>Dossiês</h2>
+                </div>
               </li>
+              <ul class="dossiers-items">
+                <li ng-repeat="dossier in dossiers">
+                  <!-- <div style="background-image:url({{dossier.featured_image.attachment_meta.sizes.large.url}});" class="image"></div> -->
+                  <article>
+                    <h3><a ui-sref="home.dossier({dossierId: dossier.id})">{{dossier.title.rendered}}</a></h3>
+                    <div class="excerpt" ng-bind-html="dossier | dossieExcerpt"></div>
+                  </article>
+                </li>
+              </ul>
             </ul>
           </li>
         </ul>

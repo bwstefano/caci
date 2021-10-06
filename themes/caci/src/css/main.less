@@ -469,59 +469,67 @@ input[type="submit"] {
             background-color: #444;
         }
         .dossiers-header{
-            color: #fff;
-            background-color: #320303;
-            padding: 90px 50px;
-            margin: 0;
-            text-transform: capitalize;  
+            h2{
+                color: #fff;
+                background-color: #320303;
+                padding: 90px 50px;
+                margin: 0;
+                text-transform: capitalize;  
+            }
         }
 
-        li {
-            display: block;
-            float: left;
-            box-sizing: border-box;
-            color: #111;
-            position: relative;
-            border-bottom: solid 1px #ddd;
-            margin: 0 30px 0 50px;
-            .excerpt{
-                max-height: 88px;
-                overflow: hidden;
-                padding-bottom: 30px;
-
-                p{
-                    font-size: 0.875em;
-                    margin: 0;
-                }
-            }
-            &:last-child {
-                border-right: 0;
-            }
-            .image {
-                position: absolute;
-                width: 100%;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                opacity: 0.3;
-            }
-            article {
+        .dossiers-items{
+            padding: 0;
+            height: 700px;
+            overflow-y: scroll;
+            li {
+                display: block;
+                float: left;
+                box-sizing: border-box;
+                color: #111;
                 position: relative;
-                z-index: 2;
-                h3 {
-                    font-size: 1.125em;
-                    line-height: 1;
-                    margin: 37.5px 0 10px 0;
-                    a {
-                        color: inherit;
-                        text-decoration: none;
+                border-bottom: solid 1px #ddd;
+                margin: 0 30px 0 50px;
+                .excerpt{
+                    max-height: 88px;
+                    overflow: hidden;
+                    padding-bottom: 30px;
+    
+                    p{
+                        font-size: 0.875em;
+                        margin: 0;
+                    }
+                }
+                &:last-child {
+                    border-right: 0;
+                }
+                .image {
+                    position: absolute;
+                    width: 100%;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    opacity: 0.3;
+                }
+                article {
+                    position: relative;
+                    z-index: 2;
+                    h3 {
+                        font-size: 1.125em;
+                        line-height: 1;
+                        margin: 37.5px 0 10px 0;
+                        a {
+                            color: inherit;
+                            text-decoration: none;
+                        }
                     }
                 }
             }
         }
+        
     }
 }
 
@@ -749,7 +757,7 @@ input[type="submit"] {
                         text-decoration: none;
                     }
                     .icon {
-                        font-size: 1.375em !important;
+                        font-size: 1.25em !important;
                         margin-right: 13px;
                     }
                  
