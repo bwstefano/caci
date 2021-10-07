@@ -126,7 +126,6 @@
             "$sce",
             function ($sce) {
                 return function (input, showLabels, pontuation) {
-                    console.log(pontuation);
                     var location = "";
                     var data = input.meta;
 

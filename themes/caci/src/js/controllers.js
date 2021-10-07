@@ -648,9 +648,13 @@
                     $rootScope.$broadcast("caseQuery", casosQuery);
                 }
 
-                $scope.whatsapp =
+                $scope.whatsappSharerURL =
                     "whatsapp://send?text=" +
-                    encodeURIComponent($scope.dossier.title.rendered + " " + $scope.url);
+                    encodeURIComponent($scope.dossier.title.rendered + " " + $scope.getEmbedUrl());
+               
+                $scope.facebookSharerURL = `https://www.facebook.com/sharer/sharer.php?u=${$scope.getEmbedUrl()}`
+                $scope.twitterSharerURL = `https://twitter.com/intent/tweet?url=${$scope.getEmbedUrl()}`
+
                 $scope.base = vindig.base;
 
                 $scope.hiddenContent = false;

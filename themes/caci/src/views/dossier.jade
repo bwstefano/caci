@@ -1,7 +1,22 @@
 article#dossier.single(ng-hide="hiddenContent")
-  header.dossier-header
-    h1(ng-bind-html="dossier.title")
-
+  section.dossier-content.single-content(tag-external)
+    header.dossier-header
+      h1(ng-bind-html="dossier.title")
+    .location 
+      .icon.icon-map-marker
+    .share
+      span Compartilhe:
+      a.icon.icon-facebook-square(ng-href="{{facebookSharerURL}}")
+      a.icon.icon-twitter(ng-href="{{twitterSharerURL}}")
+      a.icon.icon-whatsapp(ng-href="{{whatsappSharerURL}}")
+      a.icon.icon-printer(href="javascript:window.print();")
+    p.excerpt(ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt")
+    p.author por {{dossier.author.name}}
+    div(ng-bind-html="dossier.content" fit-vids)
+  section.dossier-author
+    h2 Autor
+    h3 {{dossier.author.name}}
+    p {{dossier.author.description}}
 
 #dossier-case(ui-view)
 
