@@ -513,32 +513,19 @@
                             },
                             iconCreateFunction: function (cluster) {
                                 var childCount = cluster.getChildCount();
-                                let iconName = '';
 
                                 let classes = "marker-cluster marker-cluster-";
                               
-                                if(childCount == 1){
-                                    classes += "unique";
-                                } else if (childCount < 10) {
+                                if (childCount < 10) {
                                     classes += "small";
                                 } else if (childCount < 100) {
-                                    c += "medium";
+                                    classes += "medium";
                                 } else {
                                     classes += "large";
                                 }
-                                
-                                //hydroelectric = true;
-                               
-                                if(hydroelectric){
-                                    iconName = "icon icon-bolt";
-                                    classes += " hydroelectric-cluster";
-                                } else if(caution){
-                                    iconName = "icon icon-alert";
-                                    classes += " alert";
-                                }
 
                                 var icon = L.divIcon({
-                                    html: `<div><span class="${iconName}"></span><span> ${childCount} </span></div>`,
+                                    html: `<div><span> ${childCount}</span></div>`,
                                     className: classes,
                                     iconSize: new L.Point(40, 40),
                                 });

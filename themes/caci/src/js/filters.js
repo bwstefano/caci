@@ -125,7 +125,8 @@
         app.filter("caseLocation", [
             "$sce",
             function ($sce) {
-                return function (input, showLabels) {
+                return function (input, showLabels, pontuation) {
+                    console.log(pontuation);
                     var location = "";
                     var data = input.meta;
 
@@ -133,26 +134,28 @@
                         if (showLabels)
                             location =
                                 '<span class="ti"><span class="label">Terra indígena</span> ' +
-                                data.terra_indigena +
-                                ", </span>";
+                                    data.terra_indigena +
+                                `${pontuation ? ', ' : ' '}</span>`;
                         else
                             location =
                                 '<span class="ti">' +
-                                data.terra_indigena +
-                                ", </span>";
+                                    data.terra_indigena +
+                                `${pontuation ? ', ' : ' '}</span>`;
                     }
+
                     if (data.municipio) {
                         if (showLabels)
                             location +=
                                 '<span class="mun"><span class="label">Município</span> ' +
-                                data.municipio +
-                                " - </span>";
+                                    data.municipio +
+                                `${pontuation ? ' - ' : ' '}</span>`;
                         else
                             location +=
                                 '<span class="mun"> ' +
-                                data.municipio +
-                                " - </span>";
+                                    data.municipio +
+                                `${pontuation ? ' - ' : ' '}</span>`;
                     }
+
                     if (data.uf) {
                         if (showLabels)
                             location +=

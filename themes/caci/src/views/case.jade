@@ -2,22 +2,23 @@ article#case.single
   header.case-header
     a(href="javascript:void(0);" ng-click="close()" class="icon icon-cross")
     a(href="javascript:void(0);" ng-click="prev()" class="icon icon-chevron-left")
-    a(href="javascript:void(0);" ng-click="next()" class="icon icon-chevron-right")
-    h1 {{caso | casoName}}
-    span.icon.icon-map-marker
-    .location
-      p.location-info
-        a(ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html='caso | caseLocation:true')
-    .case-meta
-      .village.meta(ng-show='caso.aldeia')
-        span.icon.icon-circle
-        p Aldeia {{caso.aldeia}}
-      .age.meta(ng-show='caso.idade')
-        span.icon.icon-chevron-small-right
-        p {{caso.idade}} anos
-      .date.meta
-        span.icon.icon-calendar
-        p.date-info(ng-bind-html='caso | casoDate')
+    a(href="javascript:void(0);" ng-click="next()" class="icon icon-chevron-small-right")
+    .case-header-content
+      h1 {{caso | casoName}}
+      span.icon.icon-map-marker
+      .location
+        p.location-info
+          a(ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html='caso | caseLocation: true:false')
+      .case-meta
+        .date.meta
+          span.icon.icon-calendar
+          p.date-info(ng-bind-html='caso | casoDate')
+        .age.meta(ng-show='caso.idade')
+          span.icon.icon-chevron-small-right
+          p {{caso.idade}} anos
+        .village.meta(ng-show='caso.aldeia')
+          span.icon.icon-circle
+          p Aldeia {{caso.aldeia}}
   section.case-content(ng-bind-html="caso.descricao")
   p.report(ng-show='caso.relatorio') 
     strong Fonte:  

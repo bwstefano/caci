@@ -833,7 +833,7 @@ input[type="submit"] {
         right: auto;
     }
     &.in-case {
-        width: 60%;
+        width: 40%;
     }
     .leaflet-top {
         top: 50px;
@@ -964,20 +964,24 @@ input[type="submit"] {
 #case.single {
     position: absolute;
     top: 50px;
-    right: 0;
-    width: 40%;
-    padding: 40px 10% 40px 40px;
+    right: 23%;
+    width: 100%;
+    padding: 40px 0 40px 40px;
     z-index: 5;
     background: #fff;
     box-sizing: border-box;
+    max-width: 540px;
+    height: 100%;
+    margin-top: -10px;
     a.icon-cross,
     a.icon-chevron-left,
-    a.icon-chevron-right {
+    a.icon-chevron-small-right {
         background: #333;
         color: #fff;
         text-decoration: none;
         font-size: 22px;
         padding: 10px;
+        float: left;
         &:hover {
             background: #444;
         }
@@ -989,16 +993,22 @@ input[type="submit"] {
     .case-header {
         background: #320303;
         color: #111;
-        margin: -40px -20% 10px -40px;
+        margin: -40px 0 10px -40px;
         padding: 40px 40px 20px 40px;
-        h1 {
-            line-height: 1.2;
-            color: #fff;
-            margin-top: 2rem;
+        .case-header-content{
+            margin-left: 50px;
+            h1 {
+                line-height: 1.2;
+                color: #fff;
+                font-size: 1.875em;
+                margin-top: 2rem;
+                clear: both;
+            }
         }
     }
+
     .icon-map-marker{
-        font-size: 35px;
+        font-size: 1.25em;
         color: #fff;
         float: left;
         margin: 10px 0;
@@ -1018,13 +1028,21 @@ input[type="submit"] {
             font-size: 20px;
         }
         .location-info {
+            .label {
+                min-width: 115px;
+                margin-right: 20px;
+            }
+            span:not(.label){
+                font-weight: bold;
+            }
             > a > span {
                 display: block;
                 color: #fff;
+                font-size: 1em;
+
                 span {
                     display: inline-block;
                     font-weight: 600;
-                    width: 40%;
                 }
             }
         }
@@ -1043,23 +1061,25 @@ input[type="submit"] {
         p {
             margin: 0;
             display: inline-block;
-            font-size: 16px;
+            font-size: 1em;
         }
         &.date {
             p.date-info {
                 .mes,
                 .dia {
-                    font-size: 12px;
+                    font-size: 0.75em;
                 }
             }
         }
     }
     .case-content {
-        padding: 4%;
+        padding: 60px 54px 60px 50px;
         background: #fff;
         margin-bottom: 10px;
         p {
             margin: 0 0 10px;
+            font-size: 1em;
+            line-height: 24px;
         }
         &:after {
             content: "";
@@ -1076,8 +1096,11 @@ input[type="submit"] {
         }
     }
     .report {
-        font-size: 14px;
+        font-size: .875em;
         color: #666;
+        border-top: solid 1px #ddd;
+        padding-top: 30px;
+        margin: 0 54px 0 50px;
     }
     .reported {
         font-weight: 600;
