@@ -19,7 +19,13 @@ article#case.single
         .village.meta(ng-show='caso.aldeia')
           span.icon.icon-circle
           p Aldeia {{caso.aldeia}}
-  section.case-content(ng-bind-html="caso.descricao")
+  section
+  .share
+    a.icon.icon-facebook-square(ng-href="sharerLink('a', true)" target="_blank")
+    a.icon.icon-twitter(ng-href="sharerLink('a', true)" target="_blank")
+    a.icon.icon-whatsapp(ng-href="sharerLink('a', true)" target="_blank")
+    a.icon.icon-printer(href="javascript:window.print();")
+  .case-content(ng-bind-html="caso.descricao")
   p.report(ng-show='caso.relatorio') 
     strong Fonte:  
     | {{caso.relatorio}}

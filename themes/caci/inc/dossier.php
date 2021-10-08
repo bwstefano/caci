@@ -56,7 +56,8 @@ class Vindig_Dossier {
         'single' => false,
         'type' => 'string',
     ] );
-    
+    register_post_meta( 'dossier', 'uf', $default_meta_arg);
+    register_post_meta( 'dossier', 'municipio', $default_meta_arg);
     register_post_meta( 'dossier', 'casos_query', $default_meta_arg);
     register_post_meta( 'dossier', 'casos', [
         'show_in_rest' => true,
@@ -93,6 +94,18 @@ class Vindig_Dossier {
               1 => 'post_title',
             ),
             'max' => '',
+          ),
+          array (
+            'key' => 'uf',
+            'label' => 'UF',
+            'name' => 'uf',
+            'type' => 'text',
+          ),
+          array (
+            'key' => 'municipio',
+            'label' => 'Município',
+            'name' => 'municipio',
+            'type' => 'text',
           ),
           array (
             'key' => 'field_casos_query',

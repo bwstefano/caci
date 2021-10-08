@@ -649,11 +649,11 @@
                 }
 
                 $scope.whatsappSharerURL =
-                    "whatsapp://send?text=" +
-                    encodeURIComponent($scope.dossier.title.rendered + " " + $scope.getEmbedUrl());
+                    "https://api.whatsapp.com/send?text=" +
+                    encodeURIComponent($scope.dossier.title + " " + $scope.getEmbedUrl());
                
                 $scope.facebookSharerURL = `https://www.facebook.com/sharer/sharer.php?u=${$scope.getEmbedUrl()}`
-                $scope.twitterSharerURL = `https://twitter.com/intent/tweet?url=${$scope.getEmbedUrl()}`
+                $scope.twitterSharerURL = `https://twitter.com/intent/tweet?text=${$scope.dossier.title}&url=${$scope.getEmbedUrl()}`
 
                 $scope.base = vindig.base;
 

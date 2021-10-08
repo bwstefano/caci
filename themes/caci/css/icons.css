@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?82pgdf');
-  src:  url('../fonts/icomoon.eot?82pgdf#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?82pgdf') format('truetype'),
-    url('../fonts/icomoon.woff?82pgdf') format('woff'),
-    url('../fonts/icomoon.svg?82pgdf#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?8e7gja');
+  src:  url('../fonts/icomoon.eot?8e7gja#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?8e7gja') format('truetype'),
+    url('../fonts/icomoon.woff?8e7gja') format('woff'),
+    url('../fonts/icomoon.svg?8e7gja#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-share:before {
+  content: "\e913";
+}
+.icon-menu:before {
+  content: "\e912";
+}
+.icon-list:before {
+  content: "\e912";
+}
+.icon-options:before {
+  content: "\e912";
+}
+.icon-lines:before {
+  content: "\e912";
+}
+.icon-hamburger:before {
+  content: "\e912";
+}
 .icon-whatsapp:before {
   content: "\e911";
 }
