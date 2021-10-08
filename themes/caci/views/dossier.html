@@ -1,7 +1,23 @@
 
 <article id="dossier" ng-hide="hiddenContent" class="single">
-  <header class="dossier-header">
-    <h1 ng-bind-html="dossier.title"></h1>
-  </header>
+  <section tag-external class="dossier-content single-content">
+    <header class="dossier-header">
+      <h1 ng-bind-html="dossier.title"></h1>
+    </header>
+    <div class="location"> 
+      <div class="icon icon-map-marker"> </div><span class="mun">{{dossier.meta.municipio}}</span><span>&nbsp;-&nbsp;</span><span class="uf">
+         
+        {{dossier.meta.uf}}</span>
+    </div>
+    <div class="share"><span>Compartilhe:</span><a ng-href="{{facebookSharerURL}}" target="_blank" class="icon icon-facebook-square"></a><a ng-href="{{twitterSharerURL}}" target="_blank" class="icon icon-twitter"></a><a ng-href="{{whatsappSharerURL}}" target="_blank" class="icon icon-whatsapp"></a><a href="javascript:window.print();" class="icon icon-printer"></a></div>
+    <p ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt" class="excerpt"></p>
+    <p class="author">por {{dossier.author.name}}</p>
+    <div ng-bind-html="dossier.content" fit-vids></div>
+  </section>
+  <section class="dossier-author">
+    <h2>Autor</h2>
+    <h3>{{dossier.author.name}}</h3>
+    <p>{{dossier.author.description}}</p>
+  </section>
 </article>
 <div id="dossier-case" ui-view></div><a href="javascript:void(0);" ng-click="toggleContent()" class="map-toggle show-if-mobile"><span ng-show="hiddenContent">Ver dossiê</span><span ng-hide="hiddenContent"><span class="icon icon-map"> </span>Ver mapa</span></a>

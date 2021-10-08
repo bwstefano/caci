@@ -1,27 +1,28 @@
 article#dossier.single(ng-hide="hiddenContent")
+  .controls
+    span.icon.icon-chevron-small-right(ng-click="next()")
+    span.icon.icon-chevron-left(ng-click="prev()")
+    span.icon.icon-cross(ng-click="close()") 
   section.dossier-content.single-content(tag-external)
-    header.dossier-header
-      h1(ng-bind-html="dossier.title")
-    .location 
-      .icon.icon-map-marker 
-      span.mun
-        {{dossier.meta.municipio}}
-      span &nbsp;-&nbsp;
-      span.uf  
-        {{dossier.meta.uf}}
-    .share
-      span Compartilhe:
-      a.icon.icon-facebook-square(ng-href="{{facebookSharerURL}}" target="_blank")
-      a.icon.icon-twitter(ng-href="{{twitterSharerURL}}" target="_blank")
-      a.icon.icon-whatsapp(ng-href="{{whatsappSharerURL}}" target="_blank")
-      a.icon.icon-printer(href="javascript:window.print();")
-    p.excerpt(ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt")
-    p.author por {{dossier.author.name}}
-    div(ng-bind-html="dossier.content" fit-vids)
-  section.dossier-author
-    h2 Autor
-    h3 {{dossier.author.name}}
-    p {{dossier.author.description}}
+    .content
+      header.dossier-header
+        h1(ng-bind-html="dossier.title")
+      .location 
+        .icon.icon-map-marker 
+        span.mun
+          {{dossier.meta.municipio}}
+        span &nbsp;-&nbsp;
+        span.uf  
+          {{dossier.meta.uf}}
+      .share
+        span Compartilhe:
+        a.icon.icon-facebook-square(ng-href="{{facebookSharerURL}}" target="_blank")
+        a.icon.icon-twitter(ng-href="{{twitterSharerURL}}" target="_blank")
+        a.icon.icon-whatsapp(ng-href="{{whatsappSharerURL}}" target="_blank")
+        a.icon.icon-printer(href="javascript:window.print();")
+      p.excerpt(ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt")
+      p.author por {{dossier.author.name}}
+      div(ng-bind-html="dossier.content" fit-vids)
 
 #dossier-case(ui-view)
 
@@ -31,3 +32,5 @@ a.map-toggle.show-if-mobile(href="javascript:void(0);" ng-click="toggleContent()
   span(ng-hide="hiddenContent")
     span.icon.icon-map 
     | Ver mapa
+
+

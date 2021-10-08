@@ -1140,6 +1140,7 @@ input[type="submit"] {
     padding: 30px;
     position: relative;
     line-height: 1.6;
+    margin-right: 48px;
     .home-link {
         position: fixed;
         margin-left: 1px;
@@ -1279,65 +1280,97 @@ input[type="submit"] {
 }
 
 #dossier.single {
-    position: relative;
+    position: absolute;
+    bottom: 0;
     z-index: 100;
     margin-top: 16%;
     margin-left: 5%;
     width: 50%;
     min-width: 600px;
     max-width: 800px;
-    .dossier-header {
-        margin: 0 0 30px;
-        h1 {
-            color: #111;
-            font-size: 40px;
-            width: 70%;
-            line-height: 1.2;
-        }
-    }
-    .location{
+    .controls{
+        right: 0;
+        position: absolute;
         display: flex;
-        align-items: center;
-        float: left;
-        text-transform: capitalize;
-        font-size: 1em;
+        flex-direction: column;
+        height: 100%;
+
         .icon{
-            margin-right: 12px;
-            font-size: 1.25em;
+            background-color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            height: 40px;
+            width: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 0 3px 3px;
         }
-        .mun{
-            font-weight: bold;
-        }
-    }
-    .share {
-        margin: 0 0 30px;
-        float: right;
-        .facebookShare {
-            height: auto;
-        }
-        > a {
-            font-size: 18px;
-            color: #111;
-            margin-left: 20px;
+        
+        .icon-cross{
+            margin-top: auto;
         }
     }
-    a.external {
-        &:after {
-            display: inline-block;
-            padding: 0 5px;
-            color: #333;
-            font-size: 12px;
-            content: "\e6a0";
-            font-family: "icomoon";
-            speak: none;
-            font-style: normal;
-            font-weight: normal;
-            font-variant: normal;
-            text-transform: none;
-            line-height: 1;
-            /* Better Font Rendering =========== */
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+    .dossier-content{
+        padding: 0 !important;
+        .content{
+            padding: 30px;
+            max-height: 585px;
+            overflow-y: scroll;
+            .dossier-header {
+                margin: 0 0 30px;
+                h1 {
+                    color: #111;
+                    font-size: 40px;
+                    width: 70%;
+                    line-height: 1.2;
+                }
+            }
+            .location{
+                display: flex;
+                align-items: center;
+                float: left;
+                text-transform: capitalize;
+                font-size: 1em;
+                .icon{
+                    margin-right: 12px;
+                    font-size: 1.25em;
+                }
+                .mun{
+                    font-weight: bold;
+                }
+            }
+            .share {
+                margin: 0 0 30px;
+                float: right;
+                .facebookShare {
+                    height: auto;
+                }
+                > a {
+                    font-size: 18px;
+                    color: #111;
+                    margin-left: 20px;
+                }
+            }
+            a.external {
+                &:after {
+                    display: inline-block;
+                    padding: 0 5px;
+                    color: #333;
+                    font-size: 12px;
+                    content: "\e6a0";
+                    font-family: "icomoon";
+                    speak: none;
+                    font-style: normal;
+                    font-weight: normal;
+                    font-variant: normal;
+                    text-transform: none;
+                    line-height: 1;
+                    /* Better Font Rendering =========== */
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+            }
         }
     }
     .dossier-author {
