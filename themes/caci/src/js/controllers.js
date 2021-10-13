@@ -666,7 +666,11 @@
                     }
                 };
             },
-        ]);
+        ]).directive('sharer', function() {
+            return {
+              templateUrl: 'sharer.jade'
+            };
+          });
 
         app.controller("CaseCtrl", [
             "$rootScope",
