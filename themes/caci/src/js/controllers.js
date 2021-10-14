@@ -350,6 +350,30 @@
                     }
                 });
 
+                $rootScope.$on("nextDossier", function (ev, dossier) {
+                    var i;
+                    _.each($scope.dossiers, function (d, index) {
+                        if (d.id == dossier.id) i = index;
+                    });
+                    if (i >= 0 && $scope.dossiers[i + 1]) {
+                        $state.go("home.dossier", {
+                            dossierId: $scope.dossiers[i + 1].id,
+                        });
+                    }
+                });
+
+                $rootScope.$on("prevDossier", function (ev, dossier) {
+                    var i;
+                    _.each($scope.dossiers, function (d, index) {
+                        if (d.id == dossier.id) i = index;
+                    });
+                    if (i >= 0 && $scope.dossiers[i - 1]) {
+                        $state.go("home.dossier", {
+                            dossierId: $scope.dossiers[i - 1].id,
+                        });
+                    }
+                });
+
                 Vindig.dossiers().then(function (res) {
                     $scope.dossiers = res.data;
                 });
@@ -659,6 +683,15 @@
                         $scope.hiddenContent = true;
                     }
                 };
+
+                $scope.next = function () {
+                    $rootScope.$broadcast("nextDossier", $scope.dossier);
+                };
+
+                $scope.prev = function () {
+                    $rootScope.$broadcast("prevDossier", $scope.dossier);
+                };
+                
             },
         ])
         
