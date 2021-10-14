@@ -648,11 +648,10 @@
                     $rootScope.$broadcast("caseQuery", casosQuery);
                 }
 
-                $scope.shareParams = {title: $scope.dossier.title, url: encodeURIComponent($scope.url)}
-
                 $scope.base = vindig.base;
-
                 $scope.hiddenContent = false;
+                $scope.shareParams = {title: $scope.dossier.title, url: encodeURIComponent($scope.url)}
+                
                 $scope.toggleContent = function () {
                     if ($scope.hiddenContent) {
                         $scope.hiddenContent = false;
@@ -662,12 +661,7 @@
                 };
             },
         ])
-        .directive('customSharer', function() {
-            return {
-              restrict: 'E',
-              templateUrl: vindig.base + "/views/sharer.html",
-            }
-        });
+        
 
         app.controller("CaseCtrl", [
             "$rootScope",
@@ -675,6 +669,7 @@
             "$stateParams",
             "$scope",
             "$sce",
+            "$filter",
             "Case",
             "Vindig",
             function (
@@ -683,9 +678,19 @@
                 $stateParams,
                 $scope,
                 $sce,
+                $filter,
                 Case,
                 Vindig
             ) {
+
+                $scope.url = $state.href(
+                    "home.case",
+                    { id: Case.data.id },
+                    {
+                        absolute: true,
+                    }
+                );
+
                 Case.data = {
                     ...Case.data,
                     ...Case.data.meta,
@@ -728,6 +733,8 @@
                 $scope.prev = function () {
                     $rootScope.$broadcast("prevCase", $scope.caso);
                 };
+
+                $scope.shareParams = {title: $filter('casoName')($scope.caso), url: encodeURIComponent($scope.url)}
             },
         ]);
 
