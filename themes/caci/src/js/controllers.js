@@ -648,16 +648,10 @@
                     $rootScope.$broadcast("caseQuery", casosQuery);
                 }
 
-                $scope.whatsappSharerURL =
-                    "https://api.whatsapp.com/send?text=" +
-                    encodeURIComponent($scope.dossier.title + " " + $scope.getEmbedUrl());
-               
-                $scope.facebookSharerURL = `https://www.facebook.com/sharer/sharer.php?u=${$scope.getEmbedUrl()}`
-                $scope.twitterSharerURL = `https://twitter.com/intent/tweet?text=${$scope.dossier.title}&url=${$scope.getEmbedUrl()}`
-
                 $scope.base = vindig.base;
-
                 $scope.hiddenContent = false;
+                $scope.shareParams = {title: $scope.dossier.title, url: encodeURIComponent($scope.url)}
+                
                 $scope.toggleContent = function () {
                     if ($scope.hiddenContent) {
                         $scope.hiddenContent = false;
@@ -666,7 +660,8 @@
                     }
                 };
             },
-        ]);
+        ])
+        
 
         app.controller("CaseCtrl", [
             "$rootScope",
@@ -674,6 +669,7 @@
             "$stateParams",
             "$scope",
             "$sce",
+            "$filter",
             "Case",
             "Vindig",
             function (
@@ -682,9 +678,19 @@
                 $stateParams,
                 $scope,
                 $sce,
+                $filter,
                 Case,
                 Vindig
             ) {
+
+                $scope.url = $state.href(
+                    "home.case",
+                    { id: Case.data.id },
+                    {
+                        absolute: true,
+                    }
+                );
+
                 Case.data = {
                     ...Case.data,
                     ...Case.data.meta,
@@ -727,6 +733,8 @@
                 $scope.prev = function () {
                     $rootScope.$broadcast("prevCase", $scope.caso);
                 };
+
+                $scope.shareParams = {title: $filter('casoName')($scope.caso), url: encodeURIComponent($scope.url)}
             },
         ]);
 

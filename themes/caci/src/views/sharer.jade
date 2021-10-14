@@ -1,0 +1,6 @@
+.share
+    span Compartilhe:
+    a(href="https://www.facebook.com/sharer/sharer.php?u={{shareParams.url}}" id="link-facebook" target="_blank").icon.icon-facebook-square
+    a(href="https://twitter.com/intent/tweet?text={{shareParams.title}}&url={{shareParams.url}}" id="link-twitter" target="_blank").icon.icon-twitter
+    a(href="https://api.whatsapp.com/send?text={{shareParams.title}} {{shareParams.url}}" id="link-whatsapp" target="_blank").icon.icon-whatsapp
+    a(href="javascript:window.print();").icon.icon-printer

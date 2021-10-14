@@ -1,6 +1,6 @@
 
 <section id="content" autoscroll="false"><a href="javascript:void(0);" ng-click="toggleCasos()" ng-show="initialized" ng-class="{&quot;collapsed&quot;: isDossier || !initialized, &quot;in-case&quot;: isCase, &quot;active&quot;: showList}" class="casos-toggle"> <span ng-show="showList" class="icon icon-arrow-right2"> </span><span ng-hide="showList" class="icon icon-arrow-left2"> </span></a>
-  <section id="casos" ng-class="{&quot;collapsed&quot;: isDossier || !initialized, &quot;in-case&quot;: isCase, &quot;active&quot;: showList}">
+  <section id="casos" ng-class="{&quot;collapsed&quot;: isDossier || !initialized, &quot;active&quot;: showList}">
     <form id="casos-filters" ng-show="initialized"><a href="javascript:void(0);" ng-class="{'icon-chevron-down': !showAdvFilters, 'icon-chevron-up': showAdvFilters}" ng-click="toggleAdvFilters()" title="Filtros avançados" class="icon toggle-adv"></a>
       <input type="text" ng-model="filter.text" placeholder="Busque pelos casos...">
       <div ng-class="{active:showAdvFilters}" class="advanced-filters">
@@ -21,7 +21,7 @@
         <article class="clearfix">
           <h3><a ui-sref="home.case({caseId: caso.id})" force-onclick="'move'" force-parent="casos">{{caso | casoName}}</a></h3>
           <div class="location">
-            <p class="location-info"><span class="icon icon-map-marker"></span><a ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html="caso | caseLocation"></a></p>
+            <p class="location-info"><span class="icon icon-map-marker"></span><a ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html="caso | caseLocation: false:true"></a></p>
           </div>
           <header class="caso-header">
             <div class="header-meta">

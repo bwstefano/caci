@@ -746,5 +746,12 @@
                 };
             },
         ]);
+
+        app.directive('customSharer', function() {
+            return {
+              restrict: 'E',
+              templateUrl: vindig.base + "/views/sharer.html",
+            }
+        });
     };
 })(window.vindig, window.jQuery, window.L);
