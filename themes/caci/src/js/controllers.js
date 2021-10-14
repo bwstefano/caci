@@ -648,12 +648,7 @@
                     $rootScope.$broadcast("caseQuery", casosQuery);
                 }
 
-                $scope.whatsappSharerURL =
-                    "https://api.whatsapp.com/send?text=" +
-                    encodeURIComponent($scope.dossier.title + " " + $scope.getEmbedUrl());
-               
-                $scope.facebookSharerURL = `https://www.facebook.com/sharer/sharer.php?u=${$scope.getEmbedUrl()}`
-                $scope.twitterSharerURL = `https://twitter.com/intent/tweet?text=${$scope.dossier.title}&url=${$scope.getEmbedUrl()}`
+                $scope.shareParams = {title: $scope.dossier.title, url: encodeURIComponent($scope.url)}
 
                 $scope.base = vindig.base;
 
@@ -666,11 +661,13 @@
                     }
                 };
             },
-        ]).directive('sharer', function() {
+        ])
+        .directive('customSharer', function() {
             return {
-              templateUrl: 'sharer.jade'
-            };
-          });
+              restrict: 'E',
+              templateUrl: vindig.base + "/views/sharer.html",
+            }
+        });
 
         app.controller("CaseCtrl", [
             "$rootScope",

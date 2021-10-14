@@ -14,12 +14,7 @@ article#dossier.single(ng-hide="hiddenContent")
         span &nbsp;-&nbsp;
         span.uf  
           {{dossier.meta.uf}}
-      .share
-        span Compartilhe:
-        a.icon.icon-facebook-square(ng-href="{{facebookSharerURL}}" target="_blank")
-        a.icon.icon-twitter(ng-href="{{twitterSharerURL}}" target="_blank")
-        a.icon.icon-whatsapp(ng-href="{{whatsappSharerURL}}" target="_blank")
-        a.icon.icon-printer(href="javascript:window.print();")
+      custom-sharer
       p.excerpt(ng-show="dossier.excerpt" ng-bind-html="dossier.excerpt")
       p.author por {{dossier.author.name}}
       div(ng-bind-html="dossier.content" fit-vids)
