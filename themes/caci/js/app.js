@@ -649,12 +649,10 @@
                     $rootScope.$broadcast("caseQuery", casosQuery);
                 }
 
-                $scope.whatsapp =
-                    "whatsapp://send?text=" +
-                    encodeURIComponent($scope.dossier.title.rendered + " " + $scope.url);
                 $scope.base = vindig.base;
-
                 $scope.hiddenContent = false;
+                $scope.shareParams = {title: $scope.dossier.title, url: encodeURIComponent($scope.url)}
+                
                 $scope.toggleContent = function () {
                     if ($scope.hiddenContent) {
                         $scope.hiddenContent = false;
@@ -663,7 +661,8 @@
                     }
                 };
             },
-        ]);
+        ])
+        
 
         app.controller("CaseCtrl", [
             "$rootScope",
@@ -671,6 +670,7 @@
             "$stateParams",
             "$scope",
             "$sce",
+            "$filter",
             "Case",
             "Vindig",
             function (
@@ -679,9 +679,19 @@
                 $stateParams,
                 $scope,
                 $sce,
+                $filter,
                 Case,
                 Vindig
             ) {
+
+                $scope.url = $state.href(
+                    "home.case",
+                    { id: Case.data.id },
+                    {
+                        absolute: true,
+                    }
+                );
+
                 Case.data = {
                     ...Case.data,
                     ...Case.data.meta,
@@ -724,6 +734,8 @@
                 $scope.prev = function () {
                     $rootScope.$broadcast("prevCase", $scope.caso);
                 };
+
+                $scope.shareParams = {title: $filter('casoName')($scope.caso), url: encodeURIComponent($scope.url)}
             },
         ]);
 
@@ -1069,8 +1081,6 @@
                             "doneLoading",
                             function (ev, $scope) {
                                 const params = getFiltersParams();
-                                console.log("params", params )
-                                console.log();
 
                                 const filters = $scope.filter
 
@@ -1253,12 +1263,12 @@
                          * Markers
                          */
                         var icon = L.divIcon({
-                            className: "pin",
+                            className: "icon icon-pin",
                             iconSize: [18, 18],
                             iconAnchor: [9, 18],
                             popupAnchor: [0, -18],
                         });
-
+                        
                         var markerLayer = L.markerClusterGroup({
                             zIndex: 100,
                             maxClusterRadius: 38,
@@ -1508,6 +1518,13 @@
                 };
             },
         ]);
+
+        app.directive('customSharer', function() {
+            return {
+              restrict: 'E',
+              templateUrl: vindig.base + "/views/sharer.html",
+            }
+        });
     };
 })(window.vindig, window.jQuery, window.L);
 
@@ -1628,10 +1645,18 @@
             },
         ]);
 
+        app.filter("dossieExcerpt", [
+            "$sce", function ($sce) {
+                return function (input) {
+                    return $sce.trustAsHtml(input.excerpt.rendered);
+                }
+            }
+        ]);
+
         app.filter("caseLocation", [
             "$sce",
             function ($sce) {
-                return function (input, showLabels) {
+                return function (input, showLabels, pontuation) {
                     var location = "";
                     var data = input.meta;
 
@@ -1639,26 +1664,28 @@
                         if (showLabels)
                             location =
                                 '<span class="ti"><span class="label">Terra indígena</span> ' +
-                                data.terra_indigena +
-                                "</span>";
+                                    data.terra_indigena +
+                                `${pontuation ? ', ' : ' '}</span>`;
                         else
                             location =
                                 '<span class="ti">' +
-                                data.terra_indigena +
-                                "</span>";
+                                    data.terra_indigena +
+                                `${pontuation ? ', ' : ' '}</span>`;
                     }
+
                     if (data.municipio) {
                         if (showLabels)
                             location +=
                                 '<span class="mun"><span class="label">Município</span> ' +
-                                data.municipio +
-                                "</span>";
+                                    data.municipio +
+                                `${pontuation ? ' - ' : ' '}</span>`;
                         else
                             location +=
-                                '<span class="mun">' +
-                                data.municipio +
-                                "</span>";
+                                '<span class="mun"> ' +
+                                    data.municipio +
+                                `${pontuation ? ' - ' : ' '}</span>`;
                     }
+
                     if (data.uf) {
                         if (showLabels)
                             location +=
