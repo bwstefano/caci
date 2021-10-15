@@ -508,22 +508,38 @@
                 $scope.downloadCasos = function (casos) {
                     var toCsv = [];
                     _.each(casos, function (caso) {
-                        //console.log(caso);
                         var c = {};
+                        //console.log(caso);
                         _.each(csvKeys, function (k) {
-                            
-                            if(k == "coordinates" && caso._related_point && caso._related_point.length) 
-                                caso.meta[k] = JSON.stringify([ caso['_related_point'][0]._geocode_lat, caso['_related_point'][0]._geocode_lon ]);
-                            else if (k == "coordinates" && !caso._related_point)
+                            if(k == "coordinates" && caso.meta._related_point && caso.meta._related_point.length) {
+                                caso.meta[k] = caso.meta._related_point[0]._geocode_lon + ',' + caso.meta._related_point[0]._geocode_lat;
+                                //caso.meta[k] = JSON.stringify([ caso.meta._related_point[0]._geocode_lat, caso.meta._related_point[0]._geocode_lon ]);
+                            } else if (k == "coordinates" && !caso._related_point) {
                                 caso.meta[k] = ""
+                            }
 
                             c[k] = caso.meta[k];
                             if (typeof c[k] == "string")
                                 c[k] = c[k].replace(/"/g, '""').replace(/(<([^>]+)>)/gi, "");
 
                         });
+                        // add terms from taxonomy tipo_violncia
+                        if ( typeof caso._embedded !== 'undefined' && caso._embedded[ 'wp:term'][0] && caso._embedded[ 'wp:term'][0].length && caso._embedded[ 'wp:term'][0].length > 0 ) {
+                            _.each(caso._embedded[ 'wp:term'][0], function (term) {
+                                if( typeof c[ 'tipos_de_violencia'] === 'undefined' ) {
+                                    c[ 'tipos_de_violencia'] = term.name;
+                                } else {
+                                    c[ 'tipos_de_violencia' ] = c[ 'tipos_de_violencia' ] + ', ' + term.name;
+                                }
+                                // tipos_de_violencia
+                                if ( term.taxonomy !== 'tipo_de_violncia' ) {
+                                    return;
+                                }
+                            });    
+                        }
                         toCsv.push(c);
                     });
+
                     JSONToCSV(toCsv, "casos", true);
                 };
 

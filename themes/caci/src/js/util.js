@@ -46,7 +46,7 @@ window.JSONToCSV = function(JSONData, ReportTitle, ShowLabel) {
   var fileName = ReportTitle.replace(/ /g,"_");
 
   //Initialize file format you want csv or xls
-  var uri = 'data:text/csv;charset=iso-8859-1,' + escape(CSV);
+  var uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(CSV);
 
   // Now the little tricky part.
   // you can use either>> window.open(uri);
