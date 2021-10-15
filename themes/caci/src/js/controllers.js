@@ -524,6 +524,22 @@
                         });
                         toCsv.push(c);
                     });
+                    // add terms from taxonomy tipo_violncia
+                    if ( caso._embedded[ 'wp:term'][0] && caso._embedded[ 'wp:term'][0].length && caso._embedded[ 'wp:term'][0].length > 0 ) {
+                        _.each(caso._embedded[ 'wp:term'][0], function (term) {
+                            console.log( term );
+                            if( typeof c[ 'tipos_de_violencia'] === 'undefined' ) {
+                                c[ 'tipos_de_violencia'] = term.name;
+                            } else {
+                                c[ 'tipos_de_violencia' ] = c[ 'tipos_de_violencia' ] + ', ' + term.name;
+                            }
+                            // tipos_de_violencia
+                            if ( term.taxonomy !== 'tipo_de_violncia' ) {
+                                return;
+                            }
+                        });    
+                    }
+                    
                     JSONToCSV(toCsv, "casos", true);
                 };
 
