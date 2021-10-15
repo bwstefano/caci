@@ -52,6 +52,14 @@ class Hacklab_CSV_Importer {
         }
         return true;
     }
+
+    private function fix_encode( $post ) {
+        foreach( $post as $key => $value ) {
+            $current_encoding = mb_detect_encoding($value, 'auto');
+            $post[ $key ] = iconv( $current_encoding, 'UTF-8//IGNORE', $value );
+        }
+        return $post;
+    }
     /**
      * Callback da seleção de arquivo
      * Processa o arquivo csv e transforma em array
@@ -93,8 +101,10 @@ class Hacklab_CSV_Importer {
 
         $count = 0;
         foreach( $posts as $post ) {
-            // Create post object
+            $post = $this->fix_encode( $post );
 
+    
+            // Create post object
             $case = array(
                 'post_title'    => '',
                 'post_content'  => '',
@@ -110,17 +120,17 @@ class Hacklab_CSV_Importer {
             $meta_input = array();
 
             if ( isset( $post[ 'nome'] ) ) {
-                $case[ 'post_title'] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['nome'] ) ) );
+                $case[ 'post_title'] = wp_strip_all_tags( esc_textarea( $post['nome'] ) );
             }
             if ( isset( $post[ 'descricao'] ) ) {
-                $case[ 'post_content'] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['descricao'] ) ) );
+                $case[ 'post_content'] = wp_strip_all_tags( esc_textarea( $post['descricao'] ) );
             }
             if ( empty( $case[ 'post_title' ] ) ) {
-                $case[ 'post_title' ] = wp_strip_all_tags( esc_textarea( utf8_encode( $post['apelido'] ) ) );
+                $case[ 'post_title' ] = wp_strip_all_tags( esc_textarea( $post['apelido'] ) );
             }
             
             foreach( $post as $key => $value ) {
-                $meta_input[ utf8_encode( $key ) ] = utf8_encode( $value );
+                $meta_input[ $key ] = $value;
             }
             
             $case[ 'meta_input' ] = $meta_input;
