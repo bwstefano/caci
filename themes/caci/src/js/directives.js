@@ -491,15 +491,15 @@
                          * Markers
                          */
                         var icon = L.divIcon({
-                            className: "icon icon-pin",
+                            className: "icon icon-caution",
                             iconSize: [18, 18],
                             iconAnchor: [9, 18],
                             popupAnchor: [0, -18],
                         });
-                        
+
                         var markerLayer = L.markerClusterGroup({
                             zIndex: 100,
-                            maxClusterRadius: 38,
+                            maxClusterRadius: 30,
                             polygonOptions: {
                                 fillColor: "#000",
                                 color: "#000",

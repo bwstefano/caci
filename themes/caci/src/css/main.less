@@ -115,11 +115,35 @@ input[type="submit"] {
     }
 }
 
-.icon-pin{
-    color: #fff;
-    font-size: 18px;
+.icon-caution{
+    position: relative;
 }
 
+.icon-caution::before{
+    color: #fff;
+    background-color: #640f0f;
+    border: solid 2px #111;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 10.5px 6px;
+    position: absolute;
+    z-index: 777;
+}
+
+.icon-caution::after{
+    content: '';
+    display: block;
+    height: 12px;
+    width: 12px;
+    rotate: 45deg;
+    background-color: #640f0f;
+    border-bottom: solid 2px #111;
+    border-right: solid 2px #111;
+    position: absolute;
+    margin-top: 33px;
+    margin-left: 9px;
+    z-index: 9999;
+}
 #masthead {
     position: absolute;
     z-index: 9997;
