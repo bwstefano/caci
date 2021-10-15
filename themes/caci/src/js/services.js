@@ -85,6 +85,7 @@
 
                         params.filter = filter;
 
+                        params._embed = 1;
                         return $http({
                             method: "GET",
                             url: vindig.api + "/case",
