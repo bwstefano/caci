@@ -107,12 +107,22 @@
   }
   #dossier.single {
     margin-left: 0;
-    width: auto;
-    min-width: 0;
+    width: 100%;
+    min-width: auto;
     max-width: auto;
     z-index: 99984;
+
     .dossier-header {
       margin: 0 30px 30px;
+    }
+
+    .dossier-content .content .share{
+      display: flex;
+      width: 100%;
+      a{
+        margin-left: 10px;
+        align-self: center;
+      }
     }
   }
   .single-content {
@@ -122,6 +132,7 @@
     display: none;
   }
   #case.single {
+    min-width: 310px !important;
     position: fixed;
     width: auto !important;
     top: 50px !important;
@@ -166,6 +177,24 @@
     background: #fff;
     padding: 10px 0;
     z-index: 99985;
+  }
+}
+
+@media (max-width: 425px) {
+  .header-main .subtitle{
+    display: none;
+  }
+
+  .case-header-content{
+    margin-left: 0 !important;
+  }
+
+  #case.single .case-content{
+    padding: 0;
+  }
+
+  #case.single .share {
+    margin: 25px 40px;
   }
 }
 

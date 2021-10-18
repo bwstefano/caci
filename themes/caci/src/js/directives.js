@@ -499,7 +499,7 @@
 
                         var markerLayer = L.markerClusterGroup({
                             zIndex: 100,
-                            maxClusterRadius: 30,
+                            maxClusterRadius: 20,
                             polygonOptions: {
                                 fillColor: "#000",
                                 color: "#000",
@@ -515,19 +515,23 @@
                                 var childCount = cluster.getChildCount();
 
                                 let classes = "marker-cluster marker-cluster-";
+                                let radius = 0;
                               
                                 if (childCount < 10) {
                                     classes += "small";
+                                    radius = 18;
                                 } else if (childCount < 100) {
                                     classes += "medium";
+                                    radius = 25;
                                 } else {
                                     classes += "large";
+                                    radius = 35;
                                 }
 
                                 var icon = L.divIcon({
                                     html: `<div><span> ${childCount}</span></div>`,
                                     className: classes,
-                                    iconSize: new L.Point(40, 40),
+                                    iconSize: new L.Point(radius, radius),
                                 });
 
                                 return icon;
