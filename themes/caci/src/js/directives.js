@@ -519,13 +519,13 @@
                               
                                 if (childCount < 10) {
                                     classes += "small";
-                                    radius = 18;
+                                    radius = 22;
                                 } else if (childCount < 100) {
                                     classes += "medium";
-                                    radius = 25;
+                                    radius = 27;
                                 } else {
                                     classes += "large";
-                                    radius = 35;
+                                    radius = 36;
                                 }
 
                                 var icon = L.divIcon({
