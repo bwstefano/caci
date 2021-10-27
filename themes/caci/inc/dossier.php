@@ -8,7 +8,7 @@ class Vindig_Dossier {
 
   function __construct() {
     add_action('init', array($this, 'register_post_type'));
-    add_filter('json_prepare_post', array($this, 'json_prepare_post'), 10, 3);
+    add_filter('rest_prepare_dossier', array($this, 'json_prepare_post'), 10, 3);
     add_action('init', array($this, 'register_fields'));
   }
 
@@ -146,11 +146,8 @@ class Vindig_Dossier {
   }
 
   function json_prepare_post($_post, $post, $context) {
-    if($post['post_type'] == 'dossier') {
-      $_post['casos'] = get_field('casos', $post['ID']);
-      $_post['casos_query'] = htmlspecialchars_decode(get_field('casos_query', $post['ID']));
-    }
-    $_post['excerpt'] = $post['post_excerpt'];
+    if($post->post_type == 'dossier')
+      $_post->data['meta']['casos'] = get_field('casos', $post->ID);
     return $_post;
   }
 
