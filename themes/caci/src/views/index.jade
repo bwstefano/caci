@@ -24,6 +24,7 @@ section#content(autoscroll='false')
         article.clearfix
           h3
             a(ui-sref='home.case({caseId: caso.id})' force-onclick="'move'" force-parent='casos') {{caso | casoName}}
+            p.violence {{caso.tipo_de_violencia}}
           .location
             p.location-info
               span.icon.icon-map-marker

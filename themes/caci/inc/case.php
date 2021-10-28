@@ -10,7 +10,7 @@ class Vindig_Case {
         add_action('init', array($this, 'register_post_type'));
         // add_action('init', array($this, 'geocode'));
         // add_action('init', array($this, 'update_title'));
-        add_filter('json_prepare_post', array($this, 'json_prepare_post'), 10, 3);
+        add_filter('rest_prepare_case', array($this, 'json_prepare_post'), 10, 3);
         add_filter('acf/fields/relationship/result', array($this, 'relationship_result'), 10, 4);
         add_filter('posts_clauses', array($this, 'posts_clauses'), 10, 2);
         add_action('pre_get_posts', array($this, 'pre_get_posts'), 5);
@@ -134,24 +134,9 @@ class Vindig_Case {
     }
 
     function json_prepare_post($_post, $post, $context) {
-        if ($post['post_type'] == 'case') {
-            $_post['nome'] = get_post_meta($post['ID'], 'nome', true);
-            $_post['apelido'] = get_post_meta($post['ID'], 'apelido', true);
-            $_post['idade'] = get_post_meta($post['ID'], 'idade', true);
-            $_post['descricao'] = get_post_meta($post['ID'], 'descricao', true);
-            $_post['povo'] = get_post_meta($post['ID'], 'povo', true);
-            $_post['aldeia'] = get_post_meta($post['ID'], 'aldeia', true);
-            $_post['dia'] = get_post_meta($post['ID'], 'dia', true);
-            $_post['mes'] = get_post_meta($post['ID'], 'mes', true);
-            $_post['ano'] = get_post_meta($post['ID'], 'ano', true);
-            $_post['cod_ibge'] = get_post_meta($post['ID'], 'cod_ibge', true);
-            $_post['municipio'] = get_post_meta($post['ID'], 'municipio', true);
-            $_post['uf'] = get_post_meta($post['ID'], 'uf', true);
-            $_post['relatorio'] = get_post_meta($post['ID'], 'relatorio', true);
-            $_post['cod_funai'] = get_post_meta($post['ID'], 'cod_funai', true);
-            $_post['terra_indigena'] = get_post_meta($post['ID'], 'terra_indigena', true);
-            $_post['fonte_cimi'] = get_post_meta($post['ID'], 'fonte_cimi', true);
-        }
+        if ($post->post_type == 'case') 
+            $_post->data['tipo_de_violencia'] = get_term($_post->data['tipo_de_violencia'][0])->name;
+        
         return $_post;
     }
 
