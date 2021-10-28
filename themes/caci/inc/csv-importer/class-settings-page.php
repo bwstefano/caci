@@ -56,7 +56,7 @@ class Hacklab_CSV_Settings {
 
 		add_settings_field(
 			'csv_file', // id
-			'Arquivo .CSV', // title
+			'Arquivo .CSV — O arquivo deve ser CSV e com a codificação UTF-8', // title
 			array( $this, 'csv_file_callback' ), // callback
 			'hacklab-json-deploy-admin', // page
 			'hacklab_csv_deploy_setting_section' // section
