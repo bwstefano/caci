@@ -66,6 +66,7 @@ class Vindig_Case {
             "cod_funai",
             "terra_indigena",
             "fonte_cimi",
+            "tipo_de_violncia"
         ];
 
         $default_meta_arg = [
@@ -134,8 +135,8 @@ class Vindig_Case {
     }
 
     function json_prepare_post($_post, $post, $context) {
-        if ($post->post_type == 'case') 
-            $_post->data['tipo_de_violencia'] = get_term($_post->data['tipo_de_violencia'][0])->name;
+        if(isset($_post->data['tipo_de_violncia'][0])) 
+            $_post->data['tipo_de_violncia'] = get_term($_post->data['tipo_de_violncia'][0])->name;
         
         return $_post;
     }
