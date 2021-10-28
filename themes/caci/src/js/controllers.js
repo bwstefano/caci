@@ -692,12 +692,14 @@
                 $scope.hiddenContent = false;
                 $scope.shareParams = {title: $scope.dossier.title, url: encodeURIComponent($scope.url)}
                 
-                $scope.toggleContent = function () {
-                    if ($scope.hiddenContent) {
-                        $scope.hiddenContent = false;
-                    } else {
-                        $scope.hiddenContent = true;
-                    }
+
+                $scope.close = function () {
+                    $scope.hiddenContent = true;
+                    $scope.showList = false;
+                    let dossierSidebar = document.getElementById("dossies");
+                    dossierSidebar.classList.add("active");
+                    $state.go("home");
+
                 };
 
                 $scope.next = function () {
