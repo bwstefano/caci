@@ -16,6 +16,7 @@ jobs:
     - name: Build # Remove or modify this step as needed
       run: |
         cd ${{ github.workspace }}/themes/caci
+        git submodule update --init --recursive
         npm install grunt-cli
         npm install
         ./node_modules/.bin/grunt build
