@@ -77,7 +77,7 @@
                         filter = filter || {};
                         filter = _.extend(
                             {
-                                posts_per_page: 40,
+                                posts_per_page: 100,
                                 without_map_query: 1,
                             },
                             filter
