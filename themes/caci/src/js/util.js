@@ -66,3 +66,20 @@ window.JSONToCSV = function(JSONData, ReportTitle, ShowLabel) {
   link.click();
   document.body.removeChild(link);
 }
+
+
+window.onload = function() {
+  let dossiesLinks = document.querySelector(".dossiers-items li article h3 a");
+  let dossierSidebar = document.getElementById("dossies");
+  
+  // [...dossiesLinks].forEach(a => a.addEventListener('click', event => {
+  //   dossierSidebar.classList.remove("active");
+  // }));
+
+  document.querySelectorAll('.dossiers-items li article h3 a').forEach(a => {
+    a.addEventListener('click', event => {
+      dossierSidebar.classList.remove("active");
+    })
+  })
+  
+};
