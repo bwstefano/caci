@@ -635,7 +635,7 @@
 
                         var legendControl = L.mapbox.legendControl().addTo(map);
 
-                        layerControl.addOverlay(markerLayer, "Assassinatos");
+                        layerControl.addOverlay(markerLayer, "Casos de violência");
 
                         map.on("layeradd", function (ev) {
                             if (ev.layer._vindig_id) {
