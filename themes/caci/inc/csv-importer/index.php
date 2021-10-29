@@ -22,7 +22,7 @@ class Hacklab_CSV_Importer {
         $this->include_files();
         
         add_action( 'admin_notices', array( $this, 'notices' ) );
-
+        add_action( 'init', array( $this, 'update_posts_without_geo') );
     }
     /**
      * Inclui os arquivos PHP
@@ -164,8 +164,8 @@ class Hacklab_CSV_Importer {
                         '_geocode_region_level_1'   => $post[ 'municipio'],
                         '_geocode_country_code'     => 'BR',
                         '_geocode_country'          => 'Brasil',
-                        '_geocode_full_address'     => $post[ 'municipio'] . ', ' . $post[ 'uf'] . ', Brasil',      
-                );
+                        '_geocode_full_address'     => "{$post[ 'municipio']}, {$post[ 'uf']}, Brasil",      
+                    );
                 foreach ( $meta_input as $key => $value ) {
                     $response = add_post_meta( $post_id, $key, $value, false );
                 }
@@ -202,6 +202,7 @@ class Hacklab_CSV_Importer {
             $count++;
 
         }
+        update_option( 'hacklab_csv_importer_run_update', true, true );
         return $count;
     }
     public function notices() {
@@ -215,5 +216,63 @@ class Hacklab_CSV_Importer {
             }
         }
     }
+    /**
+     * Update cases without geo 
+     */
+    public function update_posts_without_geo( ) {
+        $args = array(
+            'post_type'         => 'case',
+            'posts_per_page'    => 2,
+            'meta_query' => array(
+                array(
+                 'key' => '_related_point',
+                 'compare' => 'NOT EXISTS'
+                ),
+            )            
+        );
+        $posts = get_posts( $args );
+        if ( $posts && ! is_wp_error( $posts ) && ! empty( $posts ) ) {
+            foreach( $posts as $post ) {
+                $fields = get_post_meta( $post->ID );
+                if ( ! $fields || is_wp_error( $fields ) || empty( $fields ) ) {
+                    continue;
+                }
+                if ( isset( $fields[ 'municipio' ] ) && isset( $fields[ 'uf' ] ) ) {
+                    $city = urlencode($fields[ 'municipio' ][0]);
+                    $state = urlencode($fields[ 'uf' ][0]);
+
+                    $url = "https://nominatim.openstreetmap.org/search?q={$city},+{$state},+Brasil&format=json&polygon=1&addressdetails=1";
+                    $response = wp_remote_get($url);
+                    if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+                        if( $response[ 'body'] && $geocode = json_decode( $response[ 'body'], true ) ) {
+                            if ( isset( $geocode[0][ 'lat'] ) && isset( $geocode[0][ 'lon'] ) ) {
+
+                                $related_point = array(
+                                    'relevance'                 => 'primary',
+                                    '_geocode_lat'              => $geocode[0][ 'lat'],
+                                    '_geocode_lon'              => $geocode[0][ 'lon'],
+                                    '_geocode_city_level_1'     => $fields[ 'municipio'][0],
+                                    '_geocode_city'             => $fields[ 'municipio'][0],
+                                    '_geocode_region_level_3'   => 'Brasil',
+                                    '_geocode_region_level_2'   => $fields[ 'uf' ][0],
+                                    '_geocode_region_level_1'   => $fields[ 'municipio'][0],
+                                    '_geocode_country_code'     => 'BR',
+                                    '_geocode_country'          => 'Brasil',
+                                    '_geocode_full_address'     => "{$fields[ 'municipio'][0]}, {$fields[ 'uf'][0]}, Brasil",      
+                                );
+
+                                update_post_meta( $post->ID, '_related_point', $related_point );
+
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // after update all cases, then delete the option to prevent keep running
+            delete_option( 'hacklab_csv_importer_run_update' );
+        }
+    }
+
 }
 $GLOBALS[ 'hacklab_csv' ] = new Hacklab_CSV_Importer();
