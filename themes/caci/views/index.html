@@ -19,7 +19,9 @@
     <ul ng-show="casos.length &amp;&amp; initialized" class="caso-list">
       <li ng-repeat="caso in (filtered | orderBy:&quot;nome&quot; | emptyToEnd:&quot;nome&quot; | offset:currentPage*itemsPerPage | limitTo:itemsPerPage)">
         <article class="clearfix">
-          <h3><a ui-sref="home.case({caseId: caso.id})" force-onclick="'move'" force-parent="casos">{{caso | casoName}}</a></h3>
+          <h3><a ui-sref="home.case({caseId: caso.id})" force-onclick="'move'" force-parent="casos">{{caso | casoName}}</a>
+            <p class="violence">{{caso.tipo_de_violncia}}</p>
+          </h3>
           <div class="location">
             <p class="location-info"><span class="icon icon-map-marker"></span><a ng-click="focusMap(caso)" href="javascript:void(0);" ng-bind-html="caso | caseLocation: false:true"></a></p>
           </div>
