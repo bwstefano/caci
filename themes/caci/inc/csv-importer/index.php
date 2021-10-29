@@ -220,6 +220,9 @@ class Hacklab_CSV_Importer {
      * Update cases without geo 
      */
     public function update_posts_without_geo( ) {
+        if ( ! get_option( 'hacklab_csv_importer_run_update', true ) ) {
+            return;
+        }
         $args = array(
             'post_type'         => 'case',
             'posts_per_page'    => 2,
