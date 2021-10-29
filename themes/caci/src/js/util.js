@@ -66,3 +66,14 @@ window.JSONToCSV = function(JSONData, ReportTitle, ShowLabel) {
   link.click();
   document.body.removeChild(link);
 }
+
+
+window.onload = function() {
+  let dossierSidebar = document.getElementById("dossies");
+
+  document.querySelectorAll('.dossiers-items li article h3 a').forEach(a => {
+    a.addEventListener('click', event => {
+      dossierSidebar.classList.remove("active");
+    })
+  })
+};
