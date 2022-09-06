@@ -81,8 +81,8 @@ function vindig_scripts() {
 
     wp_register_script('angular-fitvids', get_stylesheet_directory_uri() . '/static/angular-fitvids/angular-fitvids.js', array('angular'));
 
-    wp_register_script('leaflet', get_stylesheet_directory_uri() . '/static/leaflet/dist/leaflet.js');
-    wp_register_style('leaflet', get_stylesheet_directory_uri() . '/static/leaflet/dist/leaflet.css');
+    wp_register_script('leaflet', get_stylesheet_directory_uri() . '/static/leaflet/leaflet.js');
+    wp_register_style('leaflet', get_stylesheet_directory_uri() . '/static/leaflet/leaflet.css');
 
     wp_register_script('leaflet.markerclusterer', get_stylesheet_directory_uri() . '/static/leaflet.markerclusterer/dist/leaflet.markercluster.js', array('leaflet'));
     wp_register_style('leaflet.markerclusterer', get_stylesheet_directory_uri() . '/static/leaflet.markerclusterer/dist/MarkerCluster.Default.css');
@@ -115,7 +115,7 @@ function vindig_scripts() {
         'base' => get_stylesheet_directory_uri(),
         'api' => esc_url(get_rest_url(null, '/wp/v2')),
         // 'api' => esc_url(get_json_url()),
-        
+
         'featured_map' => (int) pods_field_display('configuracoes_tema', null, 'mapa_em_destaque')
     ));
 }
@@ -170,7 +170,7 @@ require_once(STYLESHEETPATH . '/inc/shortcodes.php');
 /* Migrate Geolocation meta */
 if(!get_option('migrated-geolocation-meta')){
 	add_option('migrated-geolocation-meta', 1);
-	
+
 	$query = new WP_Query([
 		'posts_per_page' => -1,
 		'suppress_filters' => true,
@@ -229,7 +229,7 @@ if(!function_exists('legacy_layer_data')){
                 ];
 
                 if(!in_array($base_object["type"], ['mapbox-tileset-raster', 'tilelayer'])) continue;
-                
+
                 switch($base_object["type"]) {
                     case 'tilelayer':
                         $base_object = array_merge($base_object, [ 'tile_url' => get_post_meta($map_layer["id"], "layer_type_options", true)["url"] ]);
@@ -242,7 +242,7 @@ if(!function_exists('legacy_layer_data')){
 
                 // return $map_layer;
 
-        
+
                 switch($map_layer['use']) {
                     case 'switchable':
                         $base_object = array_merge($base_object, [ "hidden" => !$map_layer['default'] ]);
@@ -255,15 +255,15 @@ if(!function_exists('legacy_layer_data')){
                         break;
                 }
 
-                
-                $legacy_layers[] = $base_object;            
+
+                $legacy_layers[] = $base_object;
                 // return ;
             }
-            
+
             $response->data['layers'] = $legacy_layers;
 
         }
-        
+
         return $response;
     }
 }
