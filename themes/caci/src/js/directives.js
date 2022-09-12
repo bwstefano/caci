@@ -1,6 +1,5 @@
 (function (vindig, jQuery, L, undefined) {
-    L.mapbox.accessToken =
-        "pk.eyJ1IjoiaW5mb2FtYXpvbmlhIiwiYSI6InItajRmMGsifQ.JnRnLDiUXSEpgn7bPDzp7g";
+    L.mapbox.accessToken = window.vindig.mapbox_key;
 
     module.exports = function (app) {
         app.directive("tourFocus", [
@@ -271,22 +270,22 @@
 
                         function getFiltersParams() {
                             const result = {};
-                            
-                            if ($state.params.uf) 
+
+                            if ($state.params.uf)
                                 result['uf'] = $state.params.uf;
 
-                            if ($state.params.povo) 
+                            if ($state.params.povo)
                                 result['povo'] = $state.params.povo;
 
-                            if ($state.params.text) 
+                            if ($state.params.text)
                                 result['text'] = $state.params.text;
 
-                            if ($state.params.date_min) 
+                            if ($state.params.date_min)
                                 result['date_min'] = $state.params.date_min;
 
-                            if ($state.params.date_max) 
+                            if ($state.params.date_max)
                                 result['date_max'] = $state.params.date_max;
-                            
+
                             return result;
                         }
 
@@ -312,18 +311,18 @@
 
                                 const filters = $scope.filter
 
-                                if (params['uf']) 
+                                if (params['uf'])
                                     filters.strict.uf = params['uf'];
 
 
-                                if (params['povo']) 
+                                if (params['povo'])
                                     filters.strict.povo = params['povo'];
 
 
-                                if (params['text']) 
+                                if (params['text'])
                                     filters.text = params['text'];
 
-                                if (params['date_min'] || params['date_max']) 
+                                if (params['date_min'] || params['date_max'])
                                     filters.date = { min: parseInt(params['date_min']), max: parseInt(params['date_max']) };
 
                                 $rootScope.$broadcast("updatedFilters", filters);
@@ -402,7 +401,7 @@
                                 var layersObjects = [];
 
                                 scope.layers = mapData.layers;
-                                
+
                                 setTimeout(function () {
 
                                     if (mapMeta.min_zoom)
@@ -416,7 +415,7 @@
                                             mapMeta.max_zoom
                                         );
                                     else map.options.maxZoom = 18;
-                                    
+
                                     // if (!loc.length && mapData.id !== prev.id) {
                                     if (!loc.length) {
                                         setTimeout(function () {
@@ -516,7 +515,7 @@
 
                                 let classes = "marker-cluster marker-cluster-";
                                 let radius = 0;
-                              
+
                                 if (childCount < 10) {
                                     classes += "small";
                                     radius = 22;
@@ -558,10 +557,10 @@
                                 markers = [];
                                 latlngs = [];
                                 // console.log("POSTS", posts);
-                                
+
                                 for (var key in posts) {
                                     var post = posts[key];
-                                    
+
                                     latlngs.push([post.lat, post.lng]);
                                     markers[key] = L.marker(
                                         [post.lat, post.lng],
@@ -666,7 +665,7 @@
 
                         scope.$watch("layers", function (layers, prevLayers) {
                             if (layers !== prevLayers || _.isEmpty(layerMap)) {
-                                
+
                                 if (prevLayers && prevLayers.length) {
                                     if (fixed.length) {
                                         _.each(fixed, function (l) {

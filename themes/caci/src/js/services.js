@@ -138,7 +138,7 @@
                         var layer = {
                             name: layerObj.title || "",
                         };
-                        if (layerObj.type == "mapbox") {
+                        if (layerObj.type == "mapbox-tileset-raster") {
                             var tileLayer = L.mapbox.tileLayer(
                                 layerObj.mapbox_id
                             );
@@ -147,7 +147,12 @@
                             );
                             layer.layer = L.layerGroup([tileLayer, gridLayer]);
                             layer.control = L.mapbox.gridControl(gridLayer);
-                        } else if (layerObj.type == "tilelayer") {
+                        } else if (layerObj.type == "mapbox") {
+                            var styleLayer = L.mapbox.styleLayer(
+                                layerObj.style_id
+                            );
+                            layer.layer = styleLayer;
+                        }  else if (layerObj.type == "tilelayer") {
                             layer.layer = L.tileLayer(layerObj.tile_url);
                         }
 
@@ -170,7 +175,7 @@
                         console.log(id);
                         return $http.get(vindig.api + "/pages/" + id);
                     },
-                    getDossier: function (id) {                        
+                    getDossier: function (id) {
                         return $http({
                             method: "GET",
                             url: vindig.api + `/dossier/${id}`,

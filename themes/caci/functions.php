@@ -116,7 +116,8 @@ function vindig_scripts() {
         'api' => esc_url(get_rest_url(null, '/wp/v2')),
         // 'api' => esc_url(get_json_url()),
 
-        'featured_map' => (int) pods_field_display('configuracoes_tema', null, 'mapa_em_destaque')
+        'featured_map' => (int) pods_field_display('configuracoes_tema', null, 'mapa_em_destaque'),
+        'mapbox_key' => \Jeo\Settings::get_instance()->get_option('mapbox_key'),
     ));
 }
 add_action('wp_enqueue_scripts', 'vindig_scripts');
@@ -228,15 +229,21 @@ if(!function_exists('legacy_layer_data')){
                     "filtering" => $type_equivalence[$map_layer["use"]],
                 ];
 
-                if(!in_array($base_object["type"], ['mapbox-tileset-raster', 'tilelayer'])) continue;
+                if (!in_array($base_object['type'], ['mapbox', 'mapbox-tileset-raster', 'tilelayer'])) {
+                    continue;
+                }
+
+                $layer_type_options = get_post_meta($map_layer['id'], 'layer_type_options', true);
 
                 switch($base_object["type"]) {
                     case 'tilelayer':
-                        $base_object = array_merge($base_object, [ 'tile_url' => get_post_meta($map_layer["id"], "layer_type_options", true)["url"] ]);
-                        // $baseObject = [ ...$baseObject, 'tile_url' => layer.meta.layer_type_options.url ];
+                        $base_object = array_merge($base_object, [ 'type' => 'tilelayer', 'tile_url' => $layer_type_options['url'] ]);
                         break;
                     case 'mapbox-tileset-raster':
-                        $base_object = array_merge($base_object, [ 'type' => 'mapbox', 'mapbox_id' => get_post_meta($map_layer["id"], "layer_type_options", true)["tileset_id"]] );;
+                        $base_object = array_merge($base_object, [ 'type' => 'mapbox-tileset-raster', 'mapbox_id' => $layer_type_options['tileset_id'] ]);
+                        break;
+                    case 'mapbox':
+                        $base_object = array_merge($base_object, [ 'type' => 'mapbox', 'style_id' => $layer_type_options['style_id'] ]);
                         break;
                 }
 
