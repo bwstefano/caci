@@ -141,7 +141,7 @@
                         if (layerObj.type == "mapbox-tileset-raster") {
                             var tileLayer = L.mapbox.tileLayer(
                                 layerObj.mapbox_id
-                            );
+                            ).setFormat( 'png' );
                             var gridLayer = L.mapbox.gridLayer(
                                 layerObj.mapbox_id
                             );
