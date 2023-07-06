@@ -55,13 +55,16 @@
             <a ui-sref="home.page({id: page.id})">{{page.title.rendered}}</a>
           </li>
           <li id="by">
-            <h3>Desenvolvido por</h3>
+          <h3>Desenvolvido por</h3>
             <div class="logos clearfix">
-              <a href="http://rosaluxspba.org/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/rosalux.jpg" /></a>
-              <a href="http://armazemmemoria.com.br/centros-indigena/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/armz_memoria.png" /></a>
-              <a href="http://infoamazonia.org" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/infoamazonia.png" /></a>
+              <a href="https://cimi.org.br/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/cimi.png" /></a>
+              <a href="https://rosalux.org.br/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/rosalux.png" /></a>
+              <a href="https://infoamazonia.org" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/infoamazonia.png" /></a>
+              <a href="https://armazemmemoria.com.br/centros-indigena/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/armz_memoria.png" /></a>
+              <a href="https://www.relacionais.org.br/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/relacionais.png" /></a>
+              <a href="https://www.norway.no/pt/brasil/" target="_blank" rel="external"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/nicfi.png" /></a>				
             </div>
-            <p>Esta plataforma foi realizada com o apoio da Fundação Rosa Luxemburgo com fundos do Ministério Federal para a Cooperação Econômica e de Desenvolvimento da Alemanha (BMZ)</p>
+			      <p>Esta plataforma foi realizada com o apoio da Fundação Rosa Luxemburgo com fundos do Ministério Federal para a Cooperação Econômica e de Desenvolvimento da Alemanha (BMZ). A atualização da plataforma CACI faz parte do projeto Ampliação do Centro de Referência Virtual Indígena que é realizado pelo Instituto de Políticas Relacionais em parceria com Armazém Memória e com apoio da Embaixada da Noruega.</p>
           </li>
           <li id="dossies" ng-class="{active: showDossiers && !showNav}">
             <ul class="dossie-list clearfix">
